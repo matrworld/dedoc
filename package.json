@@ -53,6 +53,8 @@
     "vitest": "^1.0.4"
   },
   "dependencies": {
+    "@irys/sdk": "^0.1.5",
+    "@metaplex-foundation/mpl-bubblegum": "^3.1.2",
     "@metaplex-foundation/mpl-token-metadata": "^3.2.0",
     "@metaplex-foundation/umi": "^0.9.1",
     "@metaplex-foundation/umi-bundle-defaults": "^0.9.1",
