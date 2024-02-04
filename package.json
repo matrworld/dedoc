@@ -5,7 +5,7 @@
   "scripts": {
     "ts": "tsx --tsconfig ./tsconfig.base.json",
     "create-merkle-tree": "pnpm run ts -- ./scripts/create-merkle-tree.ts",
-    "create-collection": "pnpm run ts --  ./scripts/create-collection.ts"
+    "create-project": "pnpm run ts --  ./scripts/create-project.ts"
   },
   "private": true,
   "devDependencies": {
