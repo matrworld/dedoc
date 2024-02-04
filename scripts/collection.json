@@ -1,0 +1,22 @@
+{
+    "name": "Devnet Directory",
+    "symbol": "DEVDIR",
+    "description": "A record of Solana developers.",
+    "seller_fee_basis_points": 550,
+    "image": "https://hsouxmnlbx3pim6k7j3trr6i3dcmqvxcur353r7wli5xc3kexdfq.arweave.net/PJ1LsasN9vQzyvp3OMfI2MTIVuKkd93H9lo7cW1EuMs",
+    "external_url": "https://www.devnet.directory/",
+    "collection": {
+      "name": "Devnet Directory",
+      "family": "Matr World",
+    },
+    "attributes": [],
+    "properties": {
+      "category": "image",
+      "creators": [
+        {
+          "address": "uKLsVaxkbWpY6KGgZLer349D9k92UKZxUo9YosooUCJ",
+          "share": 100
+        }
+      ]
+    }
+}
