@@ -5,10 +5,10 @@ import { StrictMode } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import { Home } from "./routes/home";
-import { Profile } from "./routes/profile";
+import { Projects } from "./routes/projects";
 
 import * as ReactDOM from "react-dom";
-import { HashRouter } from "react-router-dom";
+import { HashRouter, useLocation } from "react-router-dom";
 
 import { useMemo } from 'react'
 
@@ -51,38 +51,48 @@ function Nav() {
   const { publicKey, connected } = useWallet();
 
   return (
-    <nav className="sticky top-0 flex justify-between items-center w-screen px-6 py-3 z-10">
-    <div className="h-8 w-8 relative">
-        <h2>DeDoc</h2>
-    </div>
-    <div className="flex gap-3 flex-wrap">
-        <a href="/docs" className="btn btn-outline">
-            <span>
-                <BookText size={16} />
-            </span>
-            Docs
-        </a>
-        <WalletMultiButton>
-            {connected ? `${publicKey?.toBase58().slice(0, 6)}...` : <>
-                <p>
-                    Connect Wallet
-                </p>
-            </>}
-        </WalletMultiButton>
-    </div>
+    <nav className="sticky top-0 w-full p-5 z-10">
+      <div className=" flex justify-between items-center ">
+        <div className="h-8 w-8 relative">
+          <a href="/">
+              <h2 className="text-xl font-semibold">DeDoc</h2>
+          </a>
+        </div>
+        <div className="flex gap-3 flex-wrap">
+            <a href="/docs" className="btn btn-outline">
+                <span>
+                    <BookText size={16} />
+                </span>
+                Docs
+            </a>
+            {connected && <a href="/#/projects" className="btn btn-outline">Projects</a>}
+            <WalletMultiButton>
+                {connected ? `${publicKey?.toBase58().slice(0, 6)}...` : <>
+                    <p>
+                        Connect Wallet
+                    </p>
+                </>}
+            </WalletMultiButton>
+        </div>
+      </div>
     </nav>
   );
 }
 
 // Content
 function App() {
+  const location = useLocation();
+  const { connected } = useWallet();
+
+  if(location.pathname.length > 1 && !connected) window.location.href = "/";
+
   return (
     <>
       <Nav />
       <main className="min-h-screen">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="projects" element={<Projects />} />
           </Routes>
       </main>
     </>
