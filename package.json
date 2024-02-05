@@ -8,7 +8,7 @@
     "create-merkle-tree": "pnpm run ts -- ./scripts/create-merkle-tree.ts",
     "create-project": "pnpm run ts --  ./scripts/create-project.ts",
     "create-collection": "pnpm run ts --  ./scripts/create-collection.ts",
-    "serve:web": "npx http-server dist/apps/web"
+    "serve:web": "http-server ./dist/apps/web"
   },
   "private": true,
   "devDependencies": {
