@@ -6,6 +6,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import { Home } from "./routes/home";
 import { Projects } from "./routes/projects";
+import { Project } from "./routes/project";
 
 import * as ReactDOM from "react-dom";
 import { HashRouter, useLocation } from "react-router-dom";
@@ -84,15 +85,14 @@ function App() {
   const location = useLocation();
   const { connected } = useWallet();
 
-  if(location.pathname.length > 1 && !connected) window.location.href = "/";
-
   return (
     <>
       <Nav />
-      <main className="min-h-screen">
+      <main className="min-h-screen mx-auto max-w-5xl py-10">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="projects" element={<Projects />} />
+            <Route path="project/:id" element={<Project />} />
           </Routes>
       </main>
     </>
