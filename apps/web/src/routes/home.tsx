@@ -11,14 +11,14 @@ function Card(props: {
 export function Home()  {
     return (
         <>
-            <div className="min-h-[30vh] md:min-h-[75vh] flex items-center">
+            <div className="min-h-[30vh] md:min-h-[75vh] flex items-center max-w-5xl mx-auto">
                 <div className="relative p-5">
                     <div className="home-spotlight aspect-square rounded-full"></div>
                     <h1 className="text-7xl md:text-[7rem]">DeDoc</h1>
                     <p className="md:text-3xl md:ml-2">Decentralized documentation</p>
                 </div>
             </div>
-            <div className="grid grid-cols-12 md:gap-10">
+            <div className="grid grid-cols-12 md:gap-10 max-w-7xl mx-auto">
                 <div className="col-span-12 md:col-span-7">
                     <Card>
                         <h2 className="text-3xl">Write</h2>

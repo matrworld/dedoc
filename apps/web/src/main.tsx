@@ -91,7 +91,7 @@ function App() {
   return (
     <>
       <Nav />
-      <main className="min-h-screen mx-auto max-w-5xl py-10">
+      <main className="min-h-screen mx-auto py-10">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="projects" element={<Projects />} />
