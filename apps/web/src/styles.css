@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* You can add global styles to this file, and also import other style files */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+
+h1,h2,h3,h4 {
+    font-weight: 500;
+    color: white;
+}
+
+.home-spotlight {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    /* background: radial-gradient(#ffffff 1%, #9198e500 10%); */
+    box-shadow: 0 0 1000px 100px rgb(255, 255, 255);
+}
+
+.gradient-card {
+    background: linear-gradient(#0D0E18, #151624);
+}
+
+.nav {
+    background: inherit; 
+    backdrop-filter: blur(10px); 
+    box-shadow: 0 0 1px 0;
+}
+
+.btn-outline {
+    border-color: #2b2d32;
+}

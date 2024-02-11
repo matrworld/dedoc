@@ -1,5 +1,5 @@
-import './styles.postcss';
-import '@solana/wallet-adapter-react-ui/styles.css';
+import './styles.css';
+import './lib/wallet-adapter/styles.css';
 
 import { StrictMode } from 'react';
 import { Routes, Route } from 'react-router-dom';
@@ -15,7 +15,10 @@ import { useMemo } from 'react'
 
 import { ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+// import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { WalletMultiButton } from './lib/wallet-adapter/connect-wallet-button';
+import { WalletModalProvider } from './lib/wallet-adapter/wallet-modal-provider';
+import {  } from "./lib/wallet-adapter/wallet-modal";
 import { clusterApiUrl } from '@solana/web3.js';
 import { BookText } from 'lucide-react';
 
@@ -52,8 +55,8 @@ function Nav() {
   const { publicKey, connected } = useWallet();
 
   return (
-    <nav className="sticky top-0 w-full p-5 z-10">
-      <div className=" flex justify-between items-center ">
+    <nav className="sticky top-0 w-full p-3 z-10 nav">
+      <div className=" flex justify-between items-center flex-wrap">
         <div className="h-8 w-8 relative">
           <a href="/">
               <h2 className="text-xl font-semibold">DeDoc</h2>
