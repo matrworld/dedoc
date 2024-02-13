@@ -63,14 +63,14 @@ function Nav() {
           </a>
         </div>
         <div className="flex gap-3 flex-wrap">
-            <a href="/docs" className="btn btn-outline">
+            <button className="btn btn-outline" disabled>
                 <span>
                     <BookText size={16} />
                 </span>
                 Docs
-            </a>
+            </button>
             {connected && <a href="/#/projects" className="btn btn-outline">Projects</a>}
-            <WalletMultiButton>
+            <WalletMultiButton disabled={true}>
                 {connected ? `${publicKey?.toBase58().slice(0, 6)}...` : <>
                     <p>
                         Connect Wallet
@@ -91,7 +91,7 @@ function App() {
   return (
     <>
       <Nav />
-      <main className="min-h-screen mx-auto py-10">
+      <main className="min-h-screen mx-auto py-10 px-5">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="projects" element={<Projects />} />

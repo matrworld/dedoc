@@ -104,9 +104,10 @@ export function Home()  {
                                 <p>Connect a Solana wallet to create a project.</p>
                             </div>
                             <div>
-                                <button className="btn btn-primary">
-                                    Connect Walelt
-                                </button>
+                                {/* <button disabled className="btn btn-primary">
+                                    Connect Wallet
+                                </button> */}
+                                <i>Coming Soon</i>
                             </div>
                         </div>
                     </Card>
