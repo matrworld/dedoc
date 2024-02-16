@@ -1,5 +1,4 @@
 import './styles.css';
-import './lib/wallet-adapter/styles.css';
 
 import { StrictMode } from 'react';
 import { Routes, Route } from 'react-router-dom';
@@ -15,18 +14,38 @@ import { useMemo } from 'react'
 
 import { ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-// import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { WalletMultiButton } from './lib/wallet-adapter/connect-wallet-button';
-import { WalletModalProvider } from './lib/wallet-adapter/wallet-modal-provider';
-import {  } from "./lib/wallet-adapter/wallet-modal";
+import {
+    WalletModalProvider,
+} from '@solana/wallet-adapter-react-ui';
+
 import { clusterApiUrl } from '@solana/web3.js';
-import { BookText } from 'lucide-react';
+
+import { Nav } from "./lib/components/nav"
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+// Content
+function App() {
+  const location = useLocation();
+  const { connected } = useWallet();
+
+  return (
+    <>
+      <Nav />
+      <main className="min-h-screen mx-auto py-10 px-5">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="project" element={<Projects />} />
+            <Route path="project/:id" element={<Project />} />
+          </Routes>
+      </main>
+    </>
+  )
+}
 
 // Providers
 function Root() {
@@ -48,57 +67,6 @@ function Root() {
           </WalletProvider>
         </ConnectionProvider>
     </StrictMode>
-  )
-}
-
-function Nav() {
-  const { publicKey, connected } = useWallet();
-
-  return (
-    <nav className="sticky top-0 w-full p-3 z-10 nav">
-      <div className=" flex justify-between items-center flex-wrap">
-        <div className="h-8 w-8 relative">
-          <a href="/">
-              <h2 className="text-xl font-semibold">DeDoc</h2>
-          </a>
-        </div>
-        <div className="flex gap-3 flex-wrap">
-            <button className="btn btn-outline" disabled>
-                <span>
-                    <BookText size={16} />
-                </span>
-                Docs
-            </button>
-            {connected && <a href="/#/projects" className="btn btn-outline">Projects</a>}
-            <WalletMultiButton disabled={true}>
-                {connected ? `${publicKey?.toBase58().slice(0, 6)}...` : <>
-                    <p>
-                        Connect Wallet
-                    </p>
-                </>}
-            </WalletMultiButton>
-        </div>
-      </div>
-    </nav>
-  );
-}
-
-// Content
-function App() {
-  const location = useLocation();
-  const { connected } = useWallet();
-
-  return (
-    <>
-      <Nav />
-      <main className="min-h-screen mx-auto py-10 px-5">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="projects" element={<Projects />} />
-            <Route path="project/:id" element={<Project />} />
-          </Routes>
-      </main>
-    </>
   )
 }
 

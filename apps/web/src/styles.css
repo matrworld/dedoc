@@ -41,3 +41,14 @@ h1,h2,h3,h4 {
 .btn-outline {
     border-color: #2b2d32;
 }
+
+.wallet-adapter-button-trigger {
+    background-color: rgba(0, 0, 0, 0) !important;
+    color: oklch(0.702921 0.005889 274.932) !important;
+    outline-color: oklch(0.702921 0.005889 274.932) !important;
+    user-select: none !important;
+    border-radius: 8px !important;
+    border-color: oklch(0.702921 0.005889 274.932 / 0.2) !important;
+    border-style: solid !important;
+    border-width: 1px !important;
+}

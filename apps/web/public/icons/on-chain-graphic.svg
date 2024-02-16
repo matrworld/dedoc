@@ -1,0 +1,18 @@
+<svg width="100%" className="mx-auto" viewBox="0 0 344 249" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="21.3168" y1="10.6132" x2="148.317" y2="114.613" stroke="#33375C" stroke-opacity="0.8"/>
+    <line x1="289.217" y1="46.4504" x2="148.217" y2="114.45" stroke="#33375C" stroke-opacity="0.8"/>
+    <line x1="21.0647" y1="10.5042" x2="289.065" y2="45.5042" stroke="#33375C" stroke-opacity="0.8"/>
+    <line x1="21.4976" y1="11.0491" x2="5.49758" y2="173.049" stroke="#33375C" stroke-opacity="0.8"/>
+    <line x1="5.22932" y1="172.556" x2="129.229" y2="236.556" stroke="#33375C" stroke-opacity="0.8"/>
+    <line x1="128.839" y1="236.527" x2="331.839" y2="167.527" stroke="#33375C" stroke-opacity="0.8"/>
+    <line x1="331.859" y1="168.48" x2="147.859" y2="114.48" stroke="#33375C" stroke-opacity="0.8"/>
+    <line x1="289.472" y1="45.8338" x2="332.472" y2="167.834" stroke="#33375C" stroke-opacity="0.8"/>
+    <line x1="4.81207" y1="172.537" x2="147.812" y2="114.537" stroke="#33375C" stroke-opacity="0.8"/>
+    <line x1="128.506" y1="236.924" x2="147.506" y2="113.924" stroke="#33375C" stroke-opacity="0.8"/>
+    <circle cx="21.5" cy="11.5" r="11.5" fill="#33375C"/>
+    <circle cx="5" cy="173" r="5" fill="#33375C"/>
+    <circle cx="289" cy="46" r="9" fill="#33375C"/>
+    <circle cx="148.5" cy="114.5" r="7.5" fill="#33375C"/>
+    <circle cx="129.5" cy="237.5" r="11.5" fill="#33375C"/>
+    <circle cx="332.5" cy="168.5" r="11.5" fill="#33375C"/>
+</svg>

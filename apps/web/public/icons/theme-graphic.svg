@@ -1,0 +1,9 @@
+<svg className="-translate-x-[5%]" width="110%" viewBox="0 0 442 143" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="195" width="52" height="143" rx="5" fill="#1B1D31"/>
+    <rect x="260" width="52" height="143" rx="5" fill="#1B1D31" fill-opacity="0.65"/>
+    <rect x="325" width="52" height="143" rx="5" fill="#1B1D31" fill-opacity="0.35"/>
+    <rect x="390" width="52" height="143" rx="5" fill="#1B1D31" fill-opacity="0.1"/>
+    <rect x="130" width="52" height="143" rx="5" fill="#1B1D31" fill-opacity="0.65"/>
+    <rect x="65" width="52" height="143" rx="5" fill="#1B1D31" fill-opacity="0.35"/>
+    <rect width="52" height="143" rx="5" fill="#1B1D31" fill-opacity="0.1"/>
+</svg>

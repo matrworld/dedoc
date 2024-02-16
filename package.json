@@ -57,7 +57,10 @@
     "vitest": "^1.0.4"
   },
   "dependencies": {
+    "@blocknote/core": "^0.11.2",
+    "@blocknote/react": "^0.11.2",
     "@irys/sdk": "^0.1.5",
+    "@mdxeditor/editor": "^2.8.3",
     "@metaplex-foundation/mpl-bubblegum": "^3.1.2",
     "@metaplex-foundation/mpl-token-metadata": "^3.2.0",
     "@metaplex-foundation/umi": "^0.9.1",
@@ -69,6 +72,7 @@
     "@solana/wallet-adapter-react-ui": "^0.9.35",
     "@solana/wallet-standard-wallet-adapter-base": "^1.1.2",
     "@solana/web3.js": "^1.89.1",
+    "@tinymce/tinymce-react": "^4.3.2",
     "@wallet-standard/app": "^1.0.1",
     "@wallet-standard/base": "^1.0.1",
     "bs58": "^5.0.0",
@@ -76,6 +80,7 @@
     "dotenv": "^16.4.1",
     "http-server": "^14.1.1",
     "lucide-react": "^0.321.0",
+    "quill": "2.0.0-rc.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-router-dom": "6.11.2",
