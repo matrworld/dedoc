@@ -4,12 +4,13 @@ import {
   mintToCollectionV1,
   parseLeafFromMintToCollectionV1Transaction,
 } from '@metaplex-foundation/mpl-bubblegum';
+import type { Umi } from '@metaplex-foundation/umi';
 
-export const mintToCollection = async (
+export const mintProjectConfig = async (
   merkleTree: any,
   collectionMint: any,
   projectConfig: any,
-  umi: any
+  umi: Umi
 ) => {
   const { signature } = await mintToCollectionV1(umi, {
     leafOwner: umi.payer.publicKey,
@@ -28,7 +29,6 @@ export const mintToCollection = async (
       ],
     },
   }).sendAndConfirm(umi, { confirm: { commitment: 'finalized' } });
-  console.log('✅ Minted to collection!');
   try {
     const leaf: LeafSchema = await parseLeafFromMintToCollectionV1Transaction(
       umi,
@@ -37,11 +37,8 @@ export const mintToCollection = async (
     const assetId = findLeafAssetIdPda(umi, {
       merkleTree: merkleTree.publicKey,
       leafIndex: leaf.nonce,
-    });
-    console.log('✅ Found asset ID', assetId);
-    return {
-      assetId,
-    };
+    })[0];
+    return assetId;
   } catch (error) {
     console.log('❌ Failed to mint to collection', error);
   }

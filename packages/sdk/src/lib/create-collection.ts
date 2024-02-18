@@ -3,57 +3,36 @@ import {
   generateSigner,
   percentAmount,
   publicKey,
+  type Umi,
 } from '@metaplex-foundation/umi';
 import { createV1 } from '@metaplex-foundation/mpl-token-metadata';
-import { irysUploader } from '@metaplex-foundation/umi-uploader-irys';
-import { keypairIdentity } from '@metaplex-foundation/umi';
-import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
-import { mplTokenMetadata } from '@metaplex-foundation/mpl-token-metadata';
 import 'dotenv/config';
-import { base64ToUint8Array } from './keypair';
 import { generateProjectUri } from '../utils/create-collection-uri';
 
 export const createCollection = async (
-  rpc: string,
-  privateKey: string,
+  umi: Umi,
   config: {
     name: string;
     description: string;
     image: string;
   }
 ) => {
-  const umi = createUmi(rpc);
-  const keypair = umi.eddsa.createKeypairFromSecretKey(
-    base64ToUint8Array(privateKey)
-  );
-  umi
-    .use(keypairIdentity(keypair))
-    .use(
-      irysUploader({
-        priceMultiplier: 1.5,
-      })
-    )
-    .use(mplTokenMetadata());
   const uri = await generateProjectUri({
     name: config.name,
     description: config.description,
-    creator: keypair.publicKey.toString(),
+    creator: umi.payer.publicKey,
     imageUri: config.image,
   });
-  console.log('Uploading JSON URI...');
   const jsonUri = await umi.uploader.uploadJson(uri);
-  console.log('Uploaded JSON URI: ', jsonUri);
   const collectionMint = generateSigner(umi);
-  console.log('Creating new collection...');
-
-  const result = await createV1(umi, {
+   await createV1(umi, {
     mint: collectionMint,
     authority: umi.payer,
     name: config.name,
     uri: jsonUri,
     creators: [
       {
-        address: keypair.publicKey,
+        address: umi.payer.publicKey,
         verified: true,
         share: 100,
       },
@@ -67,19 +46,16 @@ export const createCollection = async (
     isCollection: true,
     tokenStandard: TokenStandard.NonFungible,
   }).sendAndConfirm(umi);
-  console.log('Minting new collection...');
-
   let attempts = 0;
   while (attempts < 10) {
     try {
-      const mintResult = await mintV1(umi, {
+      await mintV1(umi, {
         mint: collectionMint.publicKey,
         amount: 1,
         authority: umi.payer,
         tokenOwner: umi.payer.publicKey,
         tokenStandard: TokenStandard.NonFungible,
       }).sendAndConfirm(umi, { confirm: { commitment: 'finalized' } });
-      console.log('✅ Collection created!\nMint: ', collectionMint.publicKey);
       return collectionMint;
     } catch (error) {
       console.error('Minting failed on attempt', attempts + 1);
