@@ -23,3 +23,12 @@ export async function getProjects() {
         },
     ]
 }
+
+export async function createProject(input: { name: string }) {
+    await sleep(3000);
+
+    return {
+        name: input.name,
+        mint: "l2S7..."
+    };
+}
