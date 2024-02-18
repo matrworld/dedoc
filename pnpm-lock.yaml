@@ -17,12 +17,9 @@ dependencies:
   '@mdxeditor/editor':
     specifier: ^2.8.3
     version: 2.8.3(@codemirror/language@6.10.1)(@lezer/common@1.2.1)(@lezer/highlight@1.2.0)(@types/react-dom@18.2.14)(@types/react@18.2.33)(react-dom@18.2.0)(react@18.2.0)(yjs@13.6.12)
-<<<<<<< HEAD
   '@metaplex-foundation/digital-asset-standard-api':
     specifier: ^1.0.3
     version: 1.0.3(@metaplex-foundation/umi@0.9.1)
-=======
->>>>>>> cd23c80b00b86370d3cf0d5a1e4c470a6136068d
   '@metaplex-foundation/mpl-bubblegum':
     specifier: ^3.1.2
     version: 3.1.2(@metaplex-foundation/umi@0.9.1)
