@@ -4,11 +4,11 @@ import {
   mintToCollectionV1,
   parseLeafFromMintToCollectionV1Transaction,
 } from '@metaplex-foundation/mpl-bubblegum';
-import type { Umi } from '@metaplex-foundation/umi';
+import type { KeypairSigner, Umi } from '@metaplex-foundation/umi';
 
 export const mintProjectConfig = async (
-  merkleTree: any,
-  collectionMint: any,
+  merkleTree: KeypairSigner,
+  collectionMint: KeypairSigner,
   projectConfig: any,
   umi: Umi
 ) => {
@@ -16,7 +16,6 @@ export const mintProjectConfig = async (
     leafOwner: umi.payer.publicKey,
     merkleTree: merkleTree.publicKey,
     collectionMint: collectionMint.publicKey,
-    collectionAuthorityRecordPda: collectionMint.collectionAuthority,
     payer: umi.payer,
     metadata: {
       name: '_dedoc',

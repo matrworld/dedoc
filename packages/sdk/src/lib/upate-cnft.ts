@@ -3,13 +3,13 @@ import {
   updateMetadata,
   UpdateArgsArgs,
 } from '@metaplex-foundation/mpl-bubblegum';
-import { type Umi, some } from '@metaplex-foundation/umi';
+import { type Umi, some, PublicKey, type KeypairSigner } from '@metaplex-foundation/umi';
 import { encode } from 'bs58';
 
 export const updateCnft = async (
   umi: Umi,
-  collectionMint: any,
-  assetId: any,
+  collectionMint: KeypairSigner,
+  assetId: PublicKey,
   config: {
     name?: string;
     uri?: string;
