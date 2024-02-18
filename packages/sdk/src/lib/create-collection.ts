@@ -9,7 +9,7 @@ import { irysUploader } from '@metaplex-foundation/umi-uploader-irys';
 import { keypairIdentity } from '@metaplex-foundation/umi';
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
 import { mplTokenMetadata } from '@metaplex-foundation/mpl-token-metadata';
-
+import 'dotenv/config';
 import { base64ToUint8Array } from './keypair';
 import { generateProjectUri } from '../utils/create-collection-uri';
 
@@ -48,6 +48,7 @@ export const createCollection = async (
 
   const result = await createV1(umi, {
     mint: collectionMint,
+    authority: umi.payer,
     name: config.name,
     uri: jsonUri,
     creators: [
@@ -57,7 +58,7 @@ export const createCollection = async (
         share: 100,
       },
       {
-        address: publicKey('HuXKdwmhosykXwvGjQSSL73hBFC9m7XNijgYD5AVV65G'), // DeDoc address
+        address: publicKey("HuXKdwmhosykXwvGjQSSL73hBFC9m7XNijgYD5AVV65G"), // DeDoc address
         verified: false,
         share: 0,
       },
@@ -74,11 +75,12 @@ export const createCollection = async (
       const mintResult = await mintV1(umi, {
         mint: collectionMint.publicKey,
         amount: 1,
+        authority: umi.payer,
         tokenOwner: umi.payer.publicKey,
         tokenStandard: TokenStandard.NonFungible,
       }).sendAndConfirm(umi);
       console.log('✅ Collection created!\nMint: ', collectionMint.publicKey);
-      return collectionMint.publicKey.toString();
+      return collectionMint;
     } catch (error) {
       console.error('Minting failed on attempt', attempts + 1);
       attempts++;
