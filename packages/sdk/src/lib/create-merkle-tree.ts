@@ -38,19 +38,15 @@ export async function createMerkleTree(
       })
     )
     .use(mplTokenMetadata());
-  
-  
+
   const merkleTree = generateSigner(umi);
   const builder = await createTree(umi, {
     merkleTree,
     maxDepth: 14,
     maxBufferSize: 64,
     treeCreator: umi.payer,
-  })
-  await builder.sendAndConfirm(umi);
-
-  console.log('✅ Merkle tree created!\nMint: ', merkleTree.publicKey);
-
+  });
+  await builder.sendAndConfirm(umi, { confirm: { commitment: 'finalized' } });
   return {
     merkleTree,
   };

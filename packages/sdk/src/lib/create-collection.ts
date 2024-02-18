@@ -58,7 +58,7 @@ export const createCollection = async (
         share: 100,
       },
       {
-        address: publicKey("HuXKdwmhosykXwvGjQSSL73hBFC9m7XNijgYD5AVV65G"), // DeDoc address
+        address: publicKey('HuXKdwmhosykXwvGjQSSL73hBFC9m7XNijgYD5AVV65G'), // DeDoc address
         verified: false,
         share: 0,
       },
@@ -78,7 +78,7 @@ export const createCollection = async (
         authority: umi.payer,
         tokenOwner: umi.payer.publicKey,
         tokenStandard: TokenStandard.NonFungible,
-      }).sendAndConfirm(umi);
+      }).sendAndConfirm(umi, { confirm: { commitment: 'finalized' } });
       console.log('✅ Collection created!\nMint: ', collectionMint.publicKey);
       return collectionMint;
     } catch (error) {
