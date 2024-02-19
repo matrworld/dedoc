@@ -1,6 +1,6 @@
 import { Theme } from 'daisyui';
 
-export const createProjectConfig = async (config: {
+export const createProjectConfigUri = async (config: {
   name: string;
   theme: Theme;
   image: string;
