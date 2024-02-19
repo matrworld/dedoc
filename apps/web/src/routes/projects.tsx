@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
 import { useFetchable, handleFetchable } from "../lib/fetchable"
-import { getProjects } from "../lib/api";
+import { getProjects, createProject } from "../lib/api";
 
 
 const openNewProject = () => {
@@ -11,12 +11,14 @@ const openNewProject = () => {
     document?.getElementById('new_project_modal')?.showModal()
 }
 
-function useCreateProject() {
-    const [ newProject, setNewProject ] = useFetchable();
+// function useCreateProject() {
+//     const [ newProject, setNewProject ] = useFetchable();
 
+//     handleFetchable(async () => createProject(), setNewProject);
+    
 
-    return createProject;
-}
+//     return createProject;
+// }
 
 export function NewProjectModal()  {
     return (
@@ -27,9 +29,9 @@ export function NewProjectModal()  {
                 <input type="text" placeholder="Project Name" className="input input-bordered w-full" />
                 <div className="modal-action">
                 <form method="dialog">
-                        {/* if there is a button in form, it will close the modal */}
-                        <button className="btn btn-outline">Save</button>
-                    </form>
+                    {/* if there is a button in form, it will close the modal */}
+                    <button className="btn btn-outline">Save</button>
+                </form>
                 </div>
             </div>
         </dialog>
