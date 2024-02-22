@@ -3,8 +3,7 @@ import { BlockNoteEditor } from "@blocknote/core";
 import { BlockNoteView, useBlockNote } from "@blocknote/react";
 import { ChevronLeft, Settings2, Grid3X3, Plus, Edit, Check } from 'lucide-react';
 import "@blocknote/react/style.css";
-import { get } from 'http';
-import { set } from '@metaplex-foundation/umi/serializers';
+import { Draggable } from "react-drag-reorder";
 
 type Page =  {
     name: string;
@@ -26,31 +25,31 @@ function SideNav(props: {
 
     return (
         <div className={!isTopLevel ? "border-l border-base-300 pl-10" : ""}>
-            {props.pages.map((item, index) => {
-                const currentPath = [...props.path, index];
-                return (
-                    <div key={index}>
-                        <button
-                            className={`btn btn-sm w-full mb-2 h-auto pl-2 px-0 justify-between text-xs font-semibold hover-child ${currentPath.join("-") === props.selectedPage.join("-") ? "btn-primary" : ""}`}
-                            onClick={() => props.selectPage(currentPath)}
-                        >
-                            <p className="">
-                                {item.name}
-                            </p>
-                            <span className="btn btn-sm btn-ghost p-1 hover-child" onClick={() => props.addPage(currentPath)}>
-                                <Plus height={18}/>
-                            </span>
-                        </button>
-                        <SideNav
-                            pages={item.children}
-                            path={currentPath}
-                            addPage={props.addPage}
-                            selectPage={props.selectPage}
-                            selectedPage={props.selectedPage}
-                        />
-                    </div>
-                )
-            })}
+                {props.pages.map((item, index) => {
+                    const currentPath = [...props.path, index];
+                    return (
+                        <div key={currentPath.join("-")}>
+                            <button
+                                className={`btn btn-sm w-full mb-2 h-auto pl-2 px-0 justify-between text-xs font-semibold hover-child ${currentPath.join("-") === props.selectedPage.join("-") ? "btn-primary" : ""}`}
+                                onClick={() => props.selectPage(currentPath)}
+                            >
+                                <p className="">
+                                    {item.name}
+                                </p>
+                                <span className="btn btn-sm btn-ghost p-1 hover-child" onClick={() => props.addPage(currentPath)}>
+                                    <Plus height={18}/>
+                                </span>
+                            </button>
+                            <SideNav
+                                pages={item.children}
+                                path={currentPath}
+                                addPage={props.addPage}
+                                selectPage={props.selectPage}
+                                selectedPage={props.selectedPage}
+                            />
+                        </div>
+                    )
+                })}
         </div>
     )
 }
@@ -73,7 +72,6 @@ export function Project()  {
     const [ selectedPage, setSelectedPage ] = useState<number[]>([0, 0]);
     const [ isEditingName, setIsEditingName ] = useState(false);
     const [ markdown, setMarkdown ] = useState("");
-    const [ blocks, setBlocks ] = useState();
 
     const editor: BlockNoteEditor = useBlockNote({
         onEditorContentChange: (editor) => {
@@ -108,19 +106,6 @@ export function Project()  {
             })
             .catch(console.log);
     }, [selectedPage]);
-
-    // editor.onEditorContentChange(() => {
-
-    //     editor
-    //         .blocksToMarkdownLossy(editor.topLevelBlocks)
-    //         .then((md) => {
-    //             const page = getPage(selectedPage, pages);
-
-    //             page.content = md;
-
-    //             updateCurrentPage(page); 
-    //         });
-    // });
 
     function handleUpdateName(e: React.ChangeEvent<HTMLInputElement>) {
         const page = getPage(selectedPage, pages);

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 import { useFetchable, handleFetchable } from "../lib/fetchable"
 import { getProjects, createProject } from "../lib/api";
+import { useProject } from "../lib/hooks/useProject";
 
 
 const openNewProject = () => {
