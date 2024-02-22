@@ -87,6 +87,7 @@
     "quill": "2.0.0-rc.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-drag-reorder": "^1.2.0",
     "react-router-dom": "6.11.2",
     "style.css": "link:@blocknote/react/style.css",
     "tslib": "^2.3.0",
