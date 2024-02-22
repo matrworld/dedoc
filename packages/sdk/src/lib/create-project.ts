@@ -1,19 +1,19 @@
 import { Theme } from 'daisyui';
-import { createProjectConfigUri } from '../utils/create-project-config';
-import { createCollection } from './create-collection';
+import { createProjectConfigUri } from './utils/create-project-uri';
+import { createCollection } from './functions/create-collection';
 import { keypairIdentity } from '@metaplex-foundation/umi';
-import { base64ToUint8Array } from './keypair';
+import { base64ToUint8Array } from './utils/keypair';
 import { irysUploader } from '@metaplex-foundation/umi-uploader-irys';
 import { mplTokenMetadata } from '@metaplex-foundation/mpl-token-metadata';
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
-import { createMerkleTree } from './create-merkle-tree';
-import { mintProjectConfig } from './mint-project-config';
-import { updateCnft } from './upate-cnft';
+import { createMerkleTree } from './functions/create-merkle-tree';
+import { mint } from './functions/mint';
+import { update } from './functions/update';
 import { dasApi } from '@metaplex-foundation/digital-asset-standard-api';
 import ora from 'ora';
 import chalk from 'chalk';
 import cliProgress from 'cli-progress';
-import { formatFinalSummary } from '../utils/test-final-summary';
+import { formatFinalSummary } from './utils/test-final-summary';
 
 export const createProject = async (
   rpc: string,
@@ -60,6 +60,7 @@ export const createProject = async (
     spinner.text = 'Creating project config json...';
     const projectConfigUri = await createProjectConfigUri({
       name: config.name,
+      description: config.description,
       theme: 'dark',
       image: 'https:/arweave.net/iP8xMGeXpydnvuGlucOKKprOdR-jt7UYvKdLGNkGh74',
       creator: '',
@@ -80,21 +81,27 @@ export const createProject = async (
       chalk.green('Merkle tree created:\n', merkleTree.publicKey.toString())
     );
     progressBar.update(4);
+
     spinner.text = 'Minting project config...';
-    const assetId = await mintProjectConfig(
+
+    const mintConfig = { 
+      name: config.name, 
+      uri: projectConfig
+    }
+    const assetId = await mint(
       merkleTree,
       collectionMint,
-      projectConfig,
+      mintConfig,
       umi
     );
     console.log(chalk.green('Project config minted:\n', assetId));
     progressBar.update(5);
     spinner.text = 'Updating project config...';
-    const update = await updateCnft(umi, collectionMint, assetId, {
+    const updateProject = await update(umi, collectionMint, assetId, {
       name: 'New Name',
     });
 
-    console.log(chalk.green('Project config updated!\n', update));
+    console.log(chalk.green('Project config updated!\n', updateProject));
     progressBar.update(6);
     spinner.succeed('Project setup complete!');
     console.log(formatFinalSummary({ 
@@ -103,7 +110,7 @@ export const createProject = async (
       projectConfig, 
       merkleTree, 
       assetId, 
-      update 
+      updateProject 
     }));
   } catch (error) {
     spinner.fail(chalk.red('Failed to create project'));

@@ -1,4 +1,4 @@
-export const generateProjectUri = async (config: {
+export const generateCollectionUri = async (config: {
   name: string;
   description: string;
   creator: string;

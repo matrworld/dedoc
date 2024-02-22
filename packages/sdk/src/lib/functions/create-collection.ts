@@ -7,7 +7,7 @@ import {
 } from '@metaplex-foundation/umi';
 import { createV1 } from '@metaplex-foundation/mpl-token-metadata';
 import 'dotenv/config';
-import { generateProjectUri } from '../utils/create-collection-uri';
+import { generateCollectionUri } from '../utils/create-collection-uri';
 
 export const createCollection = async (
   umi: Umi,
@@ -17,7 +17,7 @@ export const createCollection = async (
     image: string;
   }
 ) => {
-  const uri = await generateProjectUri({
+  const uri = await generateCollectionUri({
     name: config.name,
     description: config.description,
     creator: umi.payer.publicKey,

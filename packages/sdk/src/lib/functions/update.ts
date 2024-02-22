@@ -6,7 +6,7 @@ import {
 import { type Umi, some, PublicKey, type KeypairSigner } from '@metaplex-foundation/umi';
 import { encode } from 'bs58';
 
-export const updateCnft = async (
+export const update = async (
   umi: Umi,
   collectionMint: KeypairSigner,
   assetId: PublicKey,
