@@ -6,10 +6,13 @@ import {
 } from '@metaplex-foundation/mpl-bubblegum';
 import type { KeypairSigner, Umi } from '@metaplex-foundation/umi';
 
-export const mintProjectConfig = async (
+export const mint = async (
   merkleTree: KeypairSigner,
   collectionMint: KeypairSigner,
-  projectConfig: any,
+  config: {
+    name: string;
+    uri: string;
+  },
   umi: Umi
 ) => {
   const { signature } = await mintToCollectionV1(umi, {
@@ -18,9 +21,8 @@ export const mintProjectConfig = async (
     collectionMint: collectionMint.publicKey,
     payer: umi.payer,
     metadata: {
-      name: '_dedoc',
-      symbol: 'DEDOC',
-      uri: projectConfig,
+      name: config.name,
+      uri: config.uri,
       sellerFeeBasisPoints: 0,
       collection: { key: collectionMint.publicKey, verified: false },
       creators: [
