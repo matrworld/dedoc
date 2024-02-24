@@ -1,8 +1,11 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import type {
     Team,
 } from "../types";
+import { useWallet } from "@solana/wallet-adapter-react";
+
+import { useUmi } from "./use-umi";
 
 const DEFAULT_CONTEXT = () => ({
     teams: [],
@@ -14,7 +17,7 @@ const DEFAULT_CONTEXT = () => ({
     deleteTeam: async () => {},
 });
 
-const UserContext = createContext<{
+const TeamContext = createContext<{
     // State
     teams: Team[],
     selectedTeam: string,
@@ -27,22 +30,33 @@ const UserContext = createContext<{
     deleteTeam: (mintId: string) => Promise<void>,
 }>(DEFAULT_CONTEXT());
 
-export function useUser() { 
-    return useContext(UserContext);
+export function useTeam() { 
+    return useContext(TeamContext);
 }
 
-export function UserProvider(props: { children: React.ReactNode }) {
+export function TeamProvider(props: { children: React.ReactNode }) {
     const [ teams, setTeams ] = useState<Team[]>([]);
-    const [ selectedTeam, setProject ] = useState<string>("");
+    const [ selectedTeam, setSelectedTeam ] = useState<string>("");
 
-    async function getTeams() {};
+    const wallet = useWallet();
+    const umi = useUmi();
+
+    async function getTeams() {
+        if (!umi) return;
+
+        const response = await umi.rpc.getAssetsByOwner({
+            owner: umi.identity.publicKey,
+        });
+
+        console.log(response, "teams");
+    };
     async function selectTeam(mintId: string) {};
     async function updateTeam(mintId: string, metadata: Team) {};
     async function createTeam(metadata: Team) {};
     async function deleteTeam(mintId: string) {};
-    
+
     return (
-        <UserContext.Provider value={{
+        <TeamContext.Provider value={{
             teams,
             selectedTeam,
             getTeams,
@@ -52,6 +66,6 @@ export function UserProvider(props: { children: React.ReactNode }) {
             deleteTeam,
         }}>
             {props.children}
-        </UserContext.Provider>
+        </TeamContext.Provider>
     )
 }

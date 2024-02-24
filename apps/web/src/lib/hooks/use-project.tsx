@@ -67,6 +67,8 @@ export function ProjectProvider(props: { children: React.ReactNode }) {
     function addPage(path: PageTreePath) {};
     function selectPage(path: PageTreePath) {};
     function updatePage(path: PageTreePath, data: PageMetadata) {};
+
+    
     
     return (
         <ProjectContext.Provider value={{

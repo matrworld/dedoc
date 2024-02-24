@@ -1,6 +1,6 @@
 import './styles.css';
 
-import { StrictMode } from 'react';
+import { StrictMode, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import { Home } from "./routes/home";
@@ -22,7 +22,8 @@ import { clusterApiUrl } from '@solana/web3.js';
 
 import { Nav } from "./lib/components/nav";
 
-import { ProjectProvider } from "./lib/hooks/useProject";
+import { ProjectsProvider } from "./lib/hooks/use-projects";
+import { TeamProvider } from "./lib/hooks/use-team";
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
@@ -32,8 +33,9 @@ const root = ReactDOM.createRoot(
 
 // Content
 function App() {
-  const location = useLocation();
-  const { connected } = useWallet();
+  const wallet = useWallet();
+
+  if(!wallet) return null;
 
   return (
     <>
@@ -60,12 +62,14 @@ function Root() {
   return (
     <StrictMode>
         <ConnectionProvider endpoint={endpoint}>
-          <WalletProvider wallets={[]}>
+          <WalletProvider wallets={[]} autoConnect={true}>
               <WalletModalProvider>
                 <HashRouter basename="/">
-                  <ProjectProvider>
-                    <App />
-                  </ProjectProvider>
+                  <TeamProvider>
+                    <ProjectsProvider>
+                      <App />
+                    </ProjectsProvider>
+                  </TeamProvider>
                 </HashRouter>
               </WalletModalProvider>
           </WalletProvider>

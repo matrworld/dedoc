@@ -54,6 +54,7 @@
     "ts-node": "10.9.1",
     "typescript": "~5.3.2",
     "vite": "^5.0.0",
+    "vite-plugin-node-polyfills": "^0.21.0",
     "vitest": "^1.0.4"
   },
   "dependencies": {
@@ -66,6 +67,8 @@
     "@metaplex-foundation/mpl-token-metadata": "^3.2.0",
     "@metaplex-foundation/umi": "^0.9.1",
     "@metaplex-foundation/umi-bundle-defaults": "^0.9.1",
+    "@metaplex-foundation/umi-rpc-web3js": "^0.9.1",
+    "@metaplex-foundation/umi-signer-wallet-adapters": "^0.9.1",
     "@metaplex-foundation/umi-uploader-irys": "^0.9.1",
     "@solana-mobile/wallet-adapter-mobile": "^2.1.1",
     "@solana/wallet-adapter-base": "^0.9.23",

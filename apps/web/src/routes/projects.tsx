@@ -1,31 +1,37 @@
 import { Plus } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { useProjects } from "../lib/hooks/use-projects";
 import { useEffect } from "react";
-
-import { useFetchable, handleFetchable } from "../lib/fetchable"
-import { getProjects, createProject } from "../lib/api";
-import { useProject } from "../lib/hooks/useProject";
-
+import { useWallet } from "@solana/wallet-adapter-react";
 
 const openNewProject = () => {
     // @ts-expect-error
     document?.getElementById('new_project_modal')?.showModal()
 }
 
-// function useCreateProject() {
-//     const [ newProject, setNewProject ] = useFetchable();
-
-//     handleFetchable(async () => createProject(), setNewProject);
-    
-
-//     return createProject;
-// }
-
 export function NewProjectModal()  {
     return (
         <dialog id="new_project_modal" className="modal">
             <div className="modal-box">
-                <h3 className="font-bold text-lg">New Project</h3>
+                <h3 className="font-bold text-lg">C Project</h3>
+                <p className="py-3">Create and mint a new project.</p>
+                <input type="text" placeholder="Project Name" className="input input-bordered w-full" />
+                <div className="modal-action">
+                <form method="dialog">
+                    {/* if there is a button in form, it will close the modal */}
+                    <button className="btn btn-outline">Save</button>
+                </form>
+                </div>
+            </div>
+        </dialog>
+    )
+}
+
+export function NewTeamModal()  {
+    return (
+        <dialog id="new_project_modal" className="modal">
+            <div className="modal-box">
+                <h3 className="font-bold text-lg">Create Team</h3>
                 <p className="py-3">Create and mint a new project.</p>
                 <input type="text" placeholder="Project Name" className="input input-bordered w-full" />
                 <div className="modal-action">
@@ -55,13 +61,12 @@ function ProjectCard(props: { name: string, wallet: string }) {
 }
 
 export function Projects()  {
-    const location = useLocation();
-
-    const [ projects, setProjects ] = useFetchable();
+    const { projects, getProjects } = useProjects();
+    const wallet = useWallet();
 
     useEffect(() => {
-        handleFetchable(getProjects, setProjects);
-    }, [])
+        getProjects().then(console.log).catch(console.error);
+    }, [wallet?.connected]);
 
     return (
         <>
@@ -74,10 +79,13 @@ export function Projects()  {
                     </button>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 my-5">
-                    <ProjectCard
-                        name="Project 1"
-                        wallet="0x4e3f..."
-                    />
+                    {projects.map((project: any) => (
+                        <ProjectCard
+                            name="Project 1"
+                            wallet="0x4e3f..."
+                        />
+                    ))}
+                    
                 </div>
             </div>
             <NewProjectModal />
