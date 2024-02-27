@@ -84,7 +84,7 @@ function ProjectCard(props: { name: string, wallet: string }) {
 }
 
 export function Projects()  {
-    const { projects, getProjects } = useProjects();
+    const { projects } = useProjects();
     const wallet = useWallet();
     const createAccount = async () => {
         const umi = useUmi(wallet);
@@ -96,7 +96,7 @@ export function Projects()  {
         console.log(collection?.publicKey.toString());
     } 
     useEffect(() => {
-        getProjects().then(console.log).catch(console.error);
+       
     }, [wallet?.connected]);
     // const createAccountModal = document.getElementById('create_account_modal');
     // if (createAccountModal) {
