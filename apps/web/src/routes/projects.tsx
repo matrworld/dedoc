@@ -1,12 +1,18 @@
 import { Plus } from "lucide-react";
-import { useLocation } from "react-router-dom";
 import { useProjects } from "../lib/hooks/use-projects";
 import { useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { createCollection } from '@dedoc/sdk';
+import { useUmi } from "../lib/hooks/use-umi";
 
 const openNewProject = () => {
     // @ts-expect-error
     document?.getElementById('new_project_modal')?.showModal()
+}
+
+const initializeNewAccount = () => { 
+    // @ts-expect-error
+    document?.getElementById('create_account_modal')?.showModal()
 }
 
 export function NewProjectModal()  {
@@ -27,9 +33,26 @@ export function NewProjectModal()  {
     )
 }
 
+export function InitializeAccountModal({ createAccount }: { createAccount: () => void }) {
+    return (
+        <dialog id="create_account_modal" className="modal">
+            <div className="modal-box">
+                <h3 className="font-bold text-lg">Create Account</h3>
+                <p className="py-3">Initialize your account to start creating projects.</p>
+                <div className="modal-action">
+                <form method="dialog">
+                    {/* if there is a button in form, it will close the modal */}
+                    <button className="btn btn-outline" onClick={createAccount}>Create</button>
+                </form>
+                </div>
+            </div>
+        </dialog>
+    )
+}
+
 export function NewTeamModal()  {
     return (
-        <dialog id="new_project_modal" className="modal">
+        <dialog id="new_team_modal" className="modal">
             <div className="modal-box">
                 <h3 className="font-bold text-lg">Create Team</h3>
                 <p className="py-3">Create and mint a new project.</p>
@@ -63,11 +86,23 @@ function ProjectCard(props: { name: string, wallet: string }) {
 export function Projects()  {
     const { projects, getProjects } = useProjects();
     const wallet = useWallet();
-
+    const createAccount = async () => {
+        const umi = useUmi(wallet);
+        const collection = await createCollection(umi, { 
+            name: 'DeDoc', 
+            description: 'DeDoc NFT Collection',
+            image: 'https://arweave.net/iP8xMGeXpydnvuGlucOKKprOdR-jt7UYvKdLGNkGh74',
+        })
+        console.log(collection?.publicKey.toString());
+    } 
     useEffect(() => {
         getProjects().then(console.log).catch(console.error);
     }, [wallet?.connected]);
-
+    // const createAccountModal = document.getElementById('create_account_modal');
+    // if (createAccountModal) {
+    //     // @ts-expect-error
+    //     createAccountModal?.showModal();
+    // }
     return (
         <>
             <div className="mx-auto max-w-6xl">
@@ -76,6 +111,10 @@ export function Projects()  {
                     <button className="btn btn-outline" onClick={openNewProject}>
                         <Plus />
                         New Project
+                    </button>
+                    <button className="btn btn-outline" onClick={initializeNewAccount}>
+                        <Plus />
+                        Creating Account
                     </button>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 my-5">
@@ -89,6 +128,7 @@ export function Projects()  {
                 </div>
             </div>
             <NewProjectModal />
+            <InitializeAccountModal createAccount={createAccount}/> 
         </>
     );
 }
