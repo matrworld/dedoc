@@ -17,6 +17,7 @@ export const createCollection = async (
     image: string;
   }
 ) => {
+  console.log('Creating collection...');
   const uri = await generateCollectionUri({
     name: config.name,
     description: config.description,
@@ -24,12 +25,13 @@ export const createCollection = async (
     imageUri: config.image,
   });
   const jsonUri = await umi.uploader.uploadJson(uri);
+  console.log('Collection json uri:', jsonUri)
   const collectionMint = generateSigner(umi);
-   await createV1(umi, {
+   const mint = await createV1(umi, {
     mint: collectionMint,
     authority: umi.payer,
     name: config.name,
-    uri: jsonUri,
+    uri: 'jsonUri',
     creators: [
       {
         address: umi.payer.publicKey,
@@ -46,6 +48,7 @@ export const createCollection = async (
     isCollection: true,
     tokenStandard: TokenStandard.NonFungible,
   }).sendAndConfirm(umi);
+  console.log('Collection created:', collectionMint.publicKey.toString())
   let attempts = 0;
   while (attempts < 10) {
     try {
@@ -55,7 +58,7 @@ export const createCollection = async (
         authority: umi.payer,
         tokenOwner: umi.payer.publicKey,
         tokenStandard: TokenStandard.NonFungible,
-      }).sendAndConfirm(umi, { confirm: { commitment: 'finalized' } });
+      }).sendAndConfirm(umi);
       return collectionMint;
     } catch (error) {
       console.error('Minting failed on attempt', attempts + 1);

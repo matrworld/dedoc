@@ -18,7 +18,7 @@ export const mint = async (
   const { signature } = await mintToCollectionV1(umi, {
     leafOwner: umi.payer.publicKey,
     merkleTree: merkleTree.publicKey,
-    collectionMint: collectionMint.publicKey,
+    collectionMint: collectionMint.publicKey, 
     payer: umi.payer,
     metadata: {
       name: config.name,
