@@ -61,12 +61,7 @@ function ProjectCard(props: { name: string, wallet: string }) {
 }
 
 export function Projects()  {
-    const { projects, getProjects } = useProjects();
-    const wallet = useWallet();
-
-    useEffect(() => {
-        getProjects().then(console.log).catch(console.error);
-    }, [wallet?.connected]);
+    const { projects } = useProjects();
 
     return (
         <>
