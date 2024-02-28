@@ -23,10 +23,12 @@ const DEFAULT_CONTEXT = () => ({
     setProjects: () => {},
     selectPage: () => {},
     updatePage: () => {},
+    deletePage: () => {},
     updateProject: async () => {},
     createProject: async () => {},
     deleteProject: async () => {},
     selectProject: () => {},
+    saveProject: () => {}
 });
 
 const ProjectContext = createContext<{
@@ -42,10 +44,12 @@ const ProjectContext = createContext<{
     setProjects: (projects: Project[]) => void,
     selectPage: (pageId: string) => void,
     updatePage: (pageId: string, metadata: PageMetadata) => void,
+    deletePage: () => void
     updateProject: (projectId: string, metadata: Project) => void,
     createProject: (projectName: string, teamId: string) => Promise<void>,
     deleteProject: (projectId: string) => Promise<void>,
     selectProject: (projectId: string) => void,
+    saveProject: () => void,
 }>(DEFAULT_CONTEXT());
 
 export function useProjects() { 
@@ -68,8 +72,6 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
     const project = projects.find((project) => project.id === selectedProject) || null
     const page = project?.pages.metadata[selectedPage] || null;
 
-    const umi = useUmi();
-
     function selectPage(pageId: string) {
         setSelectedPage(pageId);
     }
@@ -81,9 +83,7 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
         const [pathIdx, ...nextPath] = path;
     
         const current = pages[pathIdx];
-    
-        console.log(path, {nextPath})
-    
+        
         if (!nextPath.length) {
             return current;
         }
@@ -151,6 +151,51 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
             }
         })
     }
+
+    function deletePage() {
+        if(!project) return;
+
+        const updatedProject = project;
+
+        const updatedPagesTree = project.pages.tree;
+
+        const deletePage = (pageId: string, pages: PageTree) => {
+            return pages.filter((page) => {
+                if(page.id === pageId) {
+                    return false;
+                }
+
+                page.children = deletePage(pageId, page.children);
+
+                return true;
+            });
+        }
+
+        updatedProject.pages.tree = deletePage(selectedPage, updatedPagesTree);
+
+        delete updatedProject.pages.metadata[selectedPage];
+
+        setProjects([
+            ...projects.filter((project) => project.id !== updatedProject.id),
+            updatedProject
+        ]);
+    }
+
+    function saveProject() {
+        const serialized = JSON.stringify(project);
+
+        const lsKey = `project:${wallet?.publicKey?.toBase58()}:${project?.id}`;
+
+        const saves = JSON.parse(window.localStorage.getItem(lsKey) || "[]");
+
+        saves.push(serialized);
+
+        if(saves.length > 10) {
+            saves.shift();
+        }
+
+        window.localStorage.setItem(lsKey, JSON.stringify(saves));
+    }
     
     async function getProjects() {
         setProjects([
@@ -205,10 +250,12 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
             setProjects,
             selectPage,
             updatePage,
+            deletePage,
             selectProject,
             updateProject,
             createProject,
             deleteProject,
+            saveProject,
         }}>
             {props.children}
         </ProjectContext.Provider>

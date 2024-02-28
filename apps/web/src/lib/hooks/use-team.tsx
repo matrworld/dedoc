@@ -47,8 +47,6 @@ export function TeamProvider(props: { children: React.ReactNode }) {
         const response = await umi.rpc.getAssetsByOwner({
             owner: umi.identity.publicKey,
         });
-
-        console.log(response, "teams");
     };
     async function selectTeam(mintId: string) {};
     async function updateTeam(mintId: string, metadata: Team) {};
