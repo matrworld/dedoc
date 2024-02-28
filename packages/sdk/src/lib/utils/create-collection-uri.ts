@@ -1,19 +1,17 @@
 export const generateCollectionUri = async (config: {
-  name: string;
-  description: string;
   creator: string;
   imageUri: string;
 }) => {
   const uri = [
     {
-      name: config.name,
+      name: 'DEDOC',
       symbol: 'DEDOC',
-      description: config.description,
+      description: 'WEB3 DOCS.',
       seller_fee_basis_points: 0,
       image: config.imageUri,
       external_url: 'https://www.dedoc.com/',
       collection: {
-        name: config.name,
+        name: 'DEDOC',
       },
       attributes: [],
       properties: {

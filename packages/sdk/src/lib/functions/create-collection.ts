@@ -19,12 +19,10 @@ export const createCollection = async (
 ) => {
   console.log('Creating collection...');
   const uri = await generateCollectionUri({
-    name: config.name,
-    description: config.description,
     creator: umi.payer.publicKey,
     imageUri: config.image,
   });
-  const jsonUri = await umi.uploader.uploadJson(uri);
+  const jsonUri = await umi.uploader.uploadJson(uri)
   console.log('Collection json uri:', jsonUri)
   const collectionMint = generateSigner(umi);
    const mint = await createV1(umi, {

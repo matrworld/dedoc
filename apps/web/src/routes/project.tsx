@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { BlockNoteEditor } from "@blocknote/core";
 import { BlockNoteView, useBlockNote } from "@blocknote/react";
-import { Plus, Edit, Check, Trash } from 'lucide-react';
+import { ChevronLeft, Settings2, Grid3X3, Plus, Edit, Check } from 'lucide-react';
 import "@blocknote/react/style.css";
 import { useProjects } from '../lib/hooks/use-projects';
 import { Pages, PageTree, PageNode, Project as ProjectType } from '../lib/types';
@@ -31,6 +31,7 @@ function SideNav(props: {
                 <p className="">
                     {project?.pages.metadata[props.id]?.name}
                 </p>
+
 
                 {path.length < reachedMaxDepth && (
                     <span className="btn btn-sm btn-ghost p-1 hover-child" onClick={() => addPage(
@@ -70,35 +71,6 @@ function SideNav(props: {
     )
 }
 
-
-const openDeletePage = () => {
-    // @ts-expect-error
-    document?.getElementById('delete_project_modal')?.showModal()
-}
-
-
-export function DeletePageModal()  {
-    const {
-        deletePage,
-    } = useProjects();
-
-    return (
-        <dialog id="delete_project_modal" className="modal">
-            <div className="modal-box">
-                <h3 className="font-bold text-lg">Delete Page</h3>
-                <p className="py-3">Are you sure you want to remove this page?</p>
-                <div className="modal-action">
-                <form method="dialog" className="flex w-full justify-between">
-                    <button className="btn btn-outline">Cancel</button>
-                    <button className="btn btn-outline text-red-900" onClick={deletePage}>Delete</button>
-                </form>
-                </div>
-            </div>
-        </dialog>
-    )
-}
-
-
 export function Project()  {
     const [ isEditingName, setIsEditingName ] = useState(false);
     const [ markdown, setMarkdown ] = useState("");
@@ -108,10 +80,12 @@ export function Project()  {
         project,
         page,
         selectedPage,
+        selectPage,
+        setProjects,
+        projects,
         addPage,
         updateProject,
-        updatePage,
-        saveProject
+        updatePage
     } = useProjects();
 
     const editor: BlockNoteEditor = useBlockNote({
@@ -162,6 +136,11 @@ export function Project()  {
             ...page,
             name: e.target.value,
         });
+
+    }
+    
+    const openSettings = () => {
+        console.log("Open settings");
     }
 
     return (
@@ -198,42 +177,32 @@ export function Project()  {
 
                 <div className="md:col-span-9">
                     <div className="flex justify-between">
-                        <div className="flex">
-                            {isEditingName ? (
-                                <>
-                                    <input
-                                        type="text"
-                                        placeholder="Page name"
-                                        value={page?.name}
-                                        className="input input-sm input-bordered mb-4 text-white"
-                                        onInput={handleUpdateName}
-                                    />
-                                    <button className="btn btn-sm btn-ghost p-1 mr-[2px]" onClick={() => setIsEditingName(false)}>
+                        {isEditingName ? (
+                            <div className="flex">
+                                <input
+                                    type="text"
+                                    placeholder="Page name"
+                                    value={page?.name}
+                                    className="input input-sm input-bordered mb-4 text-white"
+                                    onInput={handleUpdateName}
+                                />
+                                <button className="btn btn-sm btn-ghost p-1 mr-[2px]" onClick={() => setIsEditingName(false)}>
                                         <Check height={16}/>
-                                    </button>
-                                </>
-                            ) : (
-                                <div className="flex items-center gap-1 mb-4">
-                                    <h1 className="text-lg font-bold">{page?.name}</h1>
-                                    <button className="btn btn-sm btn-ghost p-1 mr-[2px]" onClick={() => setIsEditingName(true)}>
-                                        <Edit height={16}/>
-                                    </button>
-                                </div>
-                            )}
-
-                            <button className="btn btn-sm btn-ghost p-1 mr-[2px] text-red-900" onClick={openDeletePage}>
-                                <Trash height={16}/>
-                            </button>
-                        </div>
-
-                        
-                        <button className="btn btn-sm btn-outline" onClick={saveProject}>Save</button>
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-1 mb-4">
+                                <h1 className="text-lg font-bold">{page?.name}</h1>
+                                <button className="btn btn-sm btn-ghost p-1 mr-[2px]" onClick={() => setIsEditingName(true)}>
+                                    <Edit height={16}/>
+                                </button>
+                            </div>
+                        )}
+                        <button className="btn btn-sm btn-outline">Save</button>
                     </div>
                     <BlockNoteView editor={editor} />
                 </div>
             </div>
-
-            <DeletePageModal />
         </>
     );
 }
