@@ -8,7 +8,6 @@ import {
 import { createV1 } from '@metaplex-foundation/mpl-token-metadata';
 import 'dotenv/config';
 import { generateCollectionUri } from '../utils/create-collection-uri';
-import { uploadJson } from '../utils/upload-json';
 
 export const createCollection = async (
   umi: Umi,
