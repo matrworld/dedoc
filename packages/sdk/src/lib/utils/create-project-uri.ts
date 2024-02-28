@@ -1,3 +1,4 @@
+import { imageUri } from "../types/const";
 import { Project } from "../types/project";
 
 
@@ -12,7 +13,7 @@ export const createProjectConfigUri = async (config: {
     name: config.name,
     theme: 'dark',
     description: config.description,
-    image: config.image,
+    image: imageUri,
     deployments: { 
       production: '',
       staging: '',
