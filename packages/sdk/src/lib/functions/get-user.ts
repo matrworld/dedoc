@@ -1,13 +1,6 @@
 import { DasApiAssetList } from '@metaplex-foundation/digital-asset-standard-api';
 import { Umi } from '@metaplex-foundation/umi';
-
-type GetUserResponse = {
-  collections: Collection[];
-};
-type Collection = {
-  id: string;
-  projects: DasApiAssetList;
-};
+import { Collection, GetUserResponse } from '../types/project';
 
 export const getUser = async (umi: Umi): Promise<GetUserResponse[]> => {
   const collectionsByCreator = await umi.rpc.getAssetsByCreator({
