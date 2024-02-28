@@ -6,6 +6,7 @@ export * from './lib/create-project'
 export * from './lib/utils/keypair';
 export * from './lib/utils/create-project-uri';
 export * from './lib/types/project';
-export * from './lib/utils/create-collection-uri'
+export * from './lib/utils/create-collection-uri';
+export * from './lib/functions/get-user';
 
 

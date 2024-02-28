@@ -19,8 +19,7 @@ export const createCollection = async (
 ) => {
   console.log('Creating collection...');
   const uri = await generateCollectionUri({
-    creator: umi.payer.publicKey,
-    imageUri: config.image,
+    umi: umi,
   });
   const jsonUri = await umi.uploader.uploadJson(uri)
   console.log('Collection json uri:', jsonUri)
@@ -29,18 +28,13 @@ export const createCollection = async (
     mint: collectionMint,
     authority: umi.payer,
     name: config.name,
-    uri: 'jsonUri',
+    uri: jsonUri,
     creators: [
       {
         address: umi.payer.publicKey,
         verified: true,
         share: 100,
-      },
-      {
-        address: publicKey('HuXKdwmhosykXwvGjQSSL73hBFC9m7XNijgYD5AVV65G'), // DeDoc address
-        verified: false,
-        share: 0,
-      },
+      }
     ],
     sellerFeeBasisPoints: percentAmount(0),
     isCollection: true,

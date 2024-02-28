@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 import { useProjects } from "../lib/hooks/use-projects";
 import { useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { createCollection, generateCollectionUri } from '@dedoc/sdk';
+import { createCollection, generateCollectionUri, getUser } from '@dedoc/sdk';
 import { useUmi } from "../lib/hooks/use-umi";
 
 const openNewProject = () => {
@@ -95,6 +95,9 @@ export function Projects()  {
             image: 'https://arweave.net/iP8xMGeXpydnvuGlucOKKprOdR-jt7UYvKdLGNkGh74',
         })
         console.log(collection?.publicKey.toString());
+
+        const assets = await getUser(umi); 
+        console.log('Assets on the app: ', assets);
     } 
     useEffect(() => {
        

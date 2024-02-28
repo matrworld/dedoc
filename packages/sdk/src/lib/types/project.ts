@@ -1,3 +1,5 @@
+import { DasApiAssetList } from "@metaplex-foundation/digital-asset-standard-api";
+
 type PageNode = { 
     id: string;
     children: PageNode[];
@@ -24,7 +26,17 @@ type PageNode = {
       }
     }
   }
+  type GetUserResponse = {
+    collections: Collection[];
+  };
+  type Collection = {
+    id: string;
+    projects: DasApiAssetList;
+  };
 
+  
   export { 
-    Project
+    type Project, 
+    type GetUserResponse, 
+    type Collection,
   }
