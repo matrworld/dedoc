@@ -2,8 +2,9 @@ import { Plus } from "lucide-react";
 import { useProjects } from "../lib/hooks/use-projects";
 import { useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { createCollection } from '@dedoc/sdk';
+import { createCollection, generateCollectionUri } from '@dedoc/sdk';
 import { useUmi } from "../lib/hooks/use-umi";
+import { useIrys } from "../lib/hooks/use-irys";
 
 const openNewProject = () => {
     // @ts-expect-error
@@ -86,6 +87,7 @@ function ProjectCard(props: { name: string, wallet: string }) {
 export function Projects()  {
     const { projects } = useProjects();
     const wallet = useWallet();
+   
     const createAccount = async () => {
         const umi = useUmi(wallet);
         const collection = await createCollection(umi, { 
