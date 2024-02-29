@@ -1,8 +1,8 @@
-import { Plus } from "lucide-react";
+import { Key, Plus } from "lucide-react";
 import { useProjects } from "../lib/hooks/use-projects";
 import { useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { createCollection,  getUser, merkleTreePublic, mint } from '@dedoc/sdk';
+import { Project, createCollection,  getUser, merkleTreePublic, mint } from '@dedoc/sdk';
 import { useUmi } from "../lib/hooks/use-umi";
 import { publicKey } from "@metaplex-foundation/umi";
 
@@ -71,16 +71,16 @@ export function NewTeamModal()  {
     )
 }
 
-function ProjectCard(props: { name: string, wallet: string }) {
+function ProjectCard(props: { project: Project }) {
     return (
-        <a href="/#/project/4ehC" className="min-h-[10rem] flex flex-col justify-between bg-base-300 p-5 rounded-xl hover:opacity-50">
+        <a href={`/#/project/${props.project.id}`} className="min-h-[10rem] flex flex-col justify-between bg-base-300 p-5 rounded-xl hover:opacity-50">
             <h3 className="font-semibold">
-                {props.name}
+                {props.project.name}
             </h3>
             <div className="flex items-center gap-2 text-xs font-semibold">
                 <div className="w-3 h-3 bg-green-400 rounded-full">
                 </div>
-                {props.wallet.slice(0, 6) + "..."}
+                {props.project.id.slice(0, 6) + "..."}
             </div>
         </a>
     )
@@ -142,14 +142,12 @@ export function Projects()  {
                     </button>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 my-5">
-                {projects.map((project) => (
+                {projects.map((project, idx) => (
                         <ProjectCard
-                            key={project.id}
-                            name={project.name}
-                            wallet={project.id}
+                            key={idx}
+                            project={project}
                         />
                     ))}
-                    
                 </div>
             </div>
             <NewProjectModal createProject={createProject} />

@@ -2,6 +2,7 @@ import { DasApiAsset } from '@metaplex-foundation/digital-asset-standard-api';
 import { Umi } from '@metaplex-foundation/umi';
 import { Collection, GetUserResponse } from '../types/project';
 import { Project } from '../types/project';
+import { getProject } from './get-project';
 
 export const getUser = async (umi: Umi): Promise<Collection[]> => {
   const collectionsByCreator = await umi.rpc.getAssetsByCreator({
@@ -28,11 +29,9 @@ export const getUser = async (umi: Umi): Promise<Collection[]> => {
       const projects: Project[] = [];
 
       for (const asset of assets) {
-        const json = await fetch(asset.content.json_uri).then((res) => res.json() as Promise<Project>);
+        const project = await getProject(umi, asset.id, asset);
 
-        json.id = asset.id;
-
-        projects.push(json);
+        projects.push(project);
       }
 
       const collectionData: Collection = {

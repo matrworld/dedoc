@@ -83,8 +83,7 @@ export const DEFAULT_PROJECT = (project) => ({
     ...project,
 })
 
-export { 
-    type Project, 
+export {  
     type GetUserResponse, 
     type Collection,
 }

@@ -11,7 +11,6 @@ import { useTeam } from "./use-team";
 import { randomId } from '../util';
 
 import { useUmi } from "./use-umi";
-import { get } from "http";
 
 const DEFAULT_CONTEXT = () => ({
     projects: [],
@@ -65,12 +64,6 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
     const [ selectedProject, setSelectedProject ] = useState<string>("JCE1t78oZoBF9jogeAjWHWorAKQtxHzQoXqiNnNZskYP");
     const [ selectedPage, setSelectedPage ] = useState<string>("d2hg2g2g2h");
     const wallet = useWallet();
-
-    useEffect(() => {
-        if(wallet.connected) {
-            getProjects();
-        }
-    }, [selectedProject]);
 
     const project = projects.find((project) => project.id === selectedProject) || null
     const page = project?.pages.metadata[selectedPage] || null;
@@ -251,7 +244,9 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
         ]);
     }
     
-    async function selectProject(projectId: string) {};
+    async function selectProject(projectId: string) {
+        setSelectedProject(projectId);
+    };
     async function createProject(projectName: string, teamId: string) {};
     async function deleteProject(projectId: string) {};
 

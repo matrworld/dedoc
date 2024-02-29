@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
+
 import { BlockNoteEditor } from "@blocknote/core";
 import { BlockNoteView, useBlockNote } from "@blocknote/react";
 import { Plus, Edit, Check, Trash, Ban, ArrowUp, ArrowDown, Settings, Settings2, Box, Copy } from 'lucide-react';
 import "@blocknote/react/style.css";
 import { useProjects } from '../lib/hooks/use-projects';
 import { Pages, PageTree, PageNode, Project as ProjectType } from '../lib/types';
+import { useParams } from 'react-router-dom';
+import { getProject } from '@dedoc/sdk';
+import { useUmi } from "../lib/hooks/use-umi";
+import { useWallet } from '@solana/wallet-adapter-react';
 
 function SideNav(props: {
     pageTree: PageTree | undefined,
@@ -221,23 +226,24 @@ export function ProjectSettingsModal()  {
 }
 
 export function Project()  {
-    const [ isEditingName, setIsEditingName ] = useState(false);
-    const [ isEditingProjectName, setIsEditingProjectName ] = useState(false);
     const [ markdown, setMarkdown ] = useState("");
+    let { id: projectId } = useParams();
 
     const {
         project,
         page,
         selectedPage,
         moveCurrentPage,
-        selectPage,
-        setProjects,
-        projects,
         addPage,
         updateProject,
         updatePage,
-        saveProject
+        selectPage,
+        saveProject,
+        selectProject
     } = useProjects();
+
+    const wallet = useWallet();
+    const umi = useUmi(wallet);
 
     const editor: BlockNoteEditor = useBlockNote({
         onEditorContentChange: (editor) => {
@@ -289,10 +295,24 @@ export function Project()  {
         });
 
     }
-    
-    const openSettings = () => {
-        console.log("Open settings");
+
+    async function handleFetchProject() {
+        console.log({projectId})
+
+        if(projectId) {
+            const project = await getProject(umi, projectId);
+            const firstPage = project?.pages?.tree[0]?.children[0]?.id;
+            
+            updateProject(projectId, project);
+
+            console.log(firstPage)
+
+            selectProject(projectId);
+            selectPage(firstPage);
+        }
     }
+
+    useEffect(() => void handleFetchProject(), [projectId]);
 
     return (
         <>

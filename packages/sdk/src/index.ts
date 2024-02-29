@@ -9,5 +9,6 @@ export * from './lib/types/project';
 export * from './lib/utils/create-collection-uri';
 export * from './lib/functions/get-user';
 export * from './lib/types/const';
+export * from './lib/functions/get-project'
 
 
