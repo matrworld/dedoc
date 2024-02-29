@@ -11,7 +11,7 @@ import type {
 import { useWallet } from "@solana/wallet-adapter-react";
 import { randomId } from '../util';
 import { createCollection,  getUser, merkleTreePublic, mint, type Collection } from '@dedoc/sdk';
-import { publicKey } from "@metaplex-foundation/umi";
+import { KeypairSigner, publicKey } from "@metaplex-foundation/umi";
 import { useUmi } from "./use-umi";
 import { updateProject as updateProjectNft } from "@dedoc/sdk";
 
@@ -82,41 +82,82 @@ export const openNewProject = () => {
 }
 
 function NewProjectModal({ createProject }: { createProject: (projectName: string) => void }) {
-    let projectNameInput: HTMLInputElement | null = null;
+    const [projectName, setProjectName] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleCreateProject = async () => {
+        if (!projectName.trim()) return;
+        setIsLoading(true);
+        await createProject(projectName);
+        setIsLoading(false);
+
+        setTimeout(() => {
+            setProjectName('');
+            const modal = document.getElementById('new_project_modal');
+            //@ts-expect-error
+            if (modal) modal.close();
+        }, 1000);
+    };
 
     return (
         <dialog id="new_project_modal" className="modal">
             <div className="modal-box">
                 <h3 className="font-bold text-lg">Create Project</h3>
                 <p className="py-3">Create and mint a new project.</p>
-                <input required type="text" placeholder="Project Name" className="input input-bordered w-full" ref={(input) => { projectNameInput = input; }} />
+                <input
+                    required
+                    type="text"
+                    placeholder="Project Name"
+                    className="input input-bordered w-full"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                    disabled={isLoading}
+                />
                 <div className="modal-action">
-                    <form method="dialog">
-                        <button className="btn btn-outline" onClick={() => projectNameInput && createProject(projectNameInput.value)}>Save</button>
-                    </form>
+                    {isLoading ? (
+                        <span className="loading loading-spinner my-2 loading-lg"></span>
+                    ) : (
+                        <button className="btn btn-outline" onClick={handleCreateProject} disabled={!projectName.trim()}>Save</button>
+                    )}
                 </div>
             </div>
         </dialog>
     );
 }
 
-function InitializeAccountModal({ createAccount }: { createAccount: () => void }) {
+
+function InitializeAccountModal({ createAccount }: { createAccount: () => Promise<KeypairSigner | undefined> }) {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleCreateAccount = async () => {
+        setIsLoading(true);
+        await createAccount();
+        setIsLoading(false);
+
+        setTimeout(() => {
+            const modal = document.getElementById('create_account_modal');
+            //@ts-expect-error
+            if (modal) modal.close();
+        }, 1000);
+    };
+
     return (
         <dialog id="create_account_modal" className="modal">
             <div className="modal-box">
                 <h3 className="font-bold text-lg">Create Account</h3>
-                <p className="py-3">Initialize your account to start creating projects.</p>
-                <div className="modal-action">
-                <form method="dialog">
-                    {/* if there is a button in form, it will close the modal */}
-                    <button className="btn btn-outline" onClick={createAccount}>Create</button>
-                </form>
-                </div>
+               
+                        <p className="py-3">Initialize your account to start creating projects.</p>
+                        <div className="modal-action">
+                            {isLoading ? (
+                                <span className="loading loading-spinner my-2 loading-lg"></span>
+                            ) : (
+                                <button className="btn btn-outline" onClick={handleCreateAccount}>Create</button>
+                            )}
+                        </div>
             </div>
         </dialog>
-    )
+    );
 }
-
 export function ProjectsProvider(props: { children: React.ReactNode }) {
     const [ projects, setProjects ] = useState<Project[]>([]);
     const [ selectedProject, setSelectedProject ] = useState<string>("");

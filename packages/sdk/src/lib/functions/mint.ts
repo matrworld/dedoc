@@ -6,6 +6,7 @@ import {
 } from '@metaplex-foundation/mpl-bubblegum';
 import type { PublicKey, Umi } from '@metaplex-foundation/umi';
 import { createProjectConfigUri } from '../utils/create-project-uri';
+import { imageUri } from '../types/const';
 
 export const mint = async (
   merkleTree: PublicKey,
@@ -17,9 +18,7 @@ export const mint = async (
 ) => {
   const project = await createProjectConfigUri({
       name: config.name, 
-      description: 'DeDoc Project',
-      theme: 'dark',
-      creator: umi.payer.publicKey
+      image: imageUri
   })
   const uri = await umi.uploader.uploadJson(project)
   const { signature } = await mintToCollectionV1(umi, {
