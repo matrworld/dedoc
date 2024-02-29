@@ -2,6 +2,7 @@ import { Plus } from "lucide-react";
 import { useProjects } from "../lib/hooks/use-projects";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Project } from '@dedoc/sdk';
+import { useEffect } from "react";
 
 function ProjectCard(props: { project: Project }) {
     return (
@@ -19,21 +20,37 @@ function ProjectCard(props: { project: Project }) {
 }
 
 export function Projects()  {
-    const wallet = useWallet();
-    const { projects, openNewProject } = useProjects();
+    const { projects, openNewProject, selectPage, selectProject, isFetchingProjects } = useProjects();
+
+    useEffect(() => {
+        selectProject("");
+        selectPage("");
+    }, []);
 
     return (
         <>
             <div className="mx-auto max-w-6xl">
                 <div className="flex justify-between">
                     <h1 className="text-3xl font-bold">Projects</h1>
-                    <button className="btn btn-outline" onClick={openNewProject}>
-                        <Plus />
-                        New Project
-                    </button>
+
+                    {(!isFetchingProjects && 
+                        <button className="btn btn-outline" onClick={openNewProject}>
+                            <Plus />
+                            New Project
+                        </button>
+                    )}
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 my-5">
-                {projects.length > 0 ? projects.map((project, idx) => (
+
+                {isFetchingProjects ? (
+                    Array(3).fill(null).map((_, idx) => {
+                        return (
+                            <div key={idx} className="py-20 w-full rounded-lg p-5 text-center bg-base-300 animate-pulse">
+                                
+                            </div>
+                        )
+                    })
+                ): projects.length > 0 ? projects.map((project, idx) => (
                         <ProjectCard
                             key={idx}
                             project={project}

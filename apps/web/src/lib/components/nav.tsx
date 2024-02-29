@@ -4,27 +4,36 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import {
     WalletMultiButton
 } from '@solana/wallet-adapter-react-ui';
+import { useLocation } from 'react-router-dom';
 
-import { BookText } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 export function Nav() {
     const { publicKey, connected } = useWallet();
-  
+    let location = useLocation();
+
     return (
       <nav className="sticky top-0 w-full p-3 z-10 nav">
         <div className=" flex justify-between items-center flex-wrap">
-          <div className="h-8 w-8 relative">
-            <a href="/">
+          <div className="relative">
+            {location.pathname.startsWith("/project/") ? (
+              <a href="/#/project" className="flex items-center">
+                <ArrowLeft size={16}/>
+                <h2 className="text-sm font-semibold">All Projects</h2>
+              </a>
+            ) : (
+              <a href="/">
                 <h2 className="text-xl font-semibold">DeDoc</h2>
-            </a>
+              </a>
+            )}
           </div>
           <div className="flex gap-3 flex-wrap">
               <WalletMultiButton disabled={!import.meta.env.DEV}>
-                    {connected ? `${publicKey?.toBase58().slice(0, 6)}...` : <>
-                        <p>
-                            Connect Wallet
-                        </p>
-                    </>}
+                {connected ? `${publicKey?.toBase58().slice(0, 6)}...` : <>
+                    <p>
+                        Connect Wallet
+                    </p>
+                </>}
               </WalletMultiButton>
           </div>
         </div>

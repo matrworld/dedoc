@@ -16,7 +16,5 @@ export async function getProject(umi: Umi, projectId: string, dasAsset?: DasApiA
     project.id = dasData.id;
     project.collection = group_value;
 
-    console.log({dasData})
-
     return project;
 }

@@ -14,17 +14,15 @@ import { createCollection,  getUser, merkleTreePublic, mint, type Collection } f
 import { publicKey } from "@metaplex-foundation/umi";
 import { useUmi } from "./use-umi";
 import { updateProject as updateProjectNft } from "@dedoc/sdk";
-import {
-    getAssetWithProof,
-    updateMetadata,
-    UpdateArgsArgs,
-  } from '@metaplex-foundation/mpl-bubblegum';
+
 const DEFAULT_CONTEXT = () => ({
     projects: [],
     project: null,
     page: null,
     selectedProject: "",
     selectedPage: "",
+    isFetchingProjects: false,
+    isFetchingProject: false,
     
     addPage: () => {},
     setProjects: () => {},
@@ -38,6 +36,8 @@ const DEFAULT_CONTEXT = () => ({
     saveProject: () => {},
     moveCurrentPage: () => {},
     openNewProject: () => {},
+    setIsFetchingProjects: () => {},
+    setIsFetchingProject: () => {},
 });
 
 const ProjectContext = createContext<{
@@ -47,6 +47,8 @@ const ProjectContext = createContext<{
     page: PageMetadata | null,
     selectedProject: string,
     selectedPage: string,
+    isFetchingProjects: boolean,
+    isFetchingProject: boolean,
     
     // User actions
     addPage: (path: number[]) => void,
@@ -61,6 +63,8 @@ const ProjectContext = createContext<{
     saveProject: () => void,
     moveCurrentPage: (direction: "up" | "down") => void,
     openNewProject: () => void,
+    setIsFetchingProjects: (isFetching: boolean) => void,  
+    setIsFetchingProject: (isFetching: boolean) => void,  
 }>(DEFAULT_CONTEXT());
 
 export function useProjects() { 
@@ -120,6 +124,8 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
     const wallet = useWallet();
     const umi = useUmi(wallet);
     const [ collections, setCollections ] = useState<Collection[]>([]);
+    const [ isFetchingProjects, setIsFetchingProjects] = useState(true);
+    const [ isFetchingProject, setIsFetchingProject ] = useState(true);
 
     const [ showErrorToast, setSHowErrorToast ] = useState(false);
     const [ showSuccessToast, setShowSuccessToast ] = useState(false);
@@ -267,7 +273,6 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
         } finally {
             setIsLoading(false);
         }
-
     }
 
     function moveCurrentPage(direction: "up" | "down") {
@@ -310,11 +315,19 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
     }
 
     const fetchProjects = async () => {
-        const [ collection ] = await getUser(umi);
+        setIsFetchingProjects(true);
 
-        if(!collection) return openInitializeAccountModal();
+        try {
+            const [ collection ] = await getUser(umi);
+    
+            if(!collection) return openInitializeAccountModal();
+    
+            setProjects(collection.projects);
+        } catch (error) {
+            console.error(error);
+        }
 
-        setProjects(collection.projects);
+        setIsFetchingProjects(false);
     };
 
     const createProject = async (projectName: string) => {
@@ -372,6 +385,10 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
             moveCurrentPage,
             deletePage,
             openNewProject,
+            setIsFetchingProjects,
+            setIsFetchingProject,
+            isFetchingProjects,
+            isFetchingProject
         }}>
             {props.children}
             

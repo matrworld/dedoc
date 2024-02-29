@@ -249,7 +249,7 @@ function SaveModal() {
                     <form method="dialog" className="flex w-full justify-between">
                         <button className="btn btn-outline">Cancel</button>
                         <button
-                            className="btn btn-success"
+                            className="btn btn-primary"
                             onClick={handleSave}>Save</button>
                     </form>
                 </div>
@@ -271,7 +271,10 @@ export function Project()  {
         updateProject,
         updatePage,
         selectPage,
-        selectProject
+        selectProject,
+        setIsFetchingProjects,
+        setIsFetchingProject,
+        isFetchingProject
     } = useProjects();
 
     const wallet = useWallet();
@@ -307,7 +310,7 @@ export function Project()  {
         });
     }, [markdown]);
 
-    useEffect(() => {    
+    useEffect(() => { 
         if(!page) return;
         
         editor
@@ -325,19 +328,26 @@ export function Project()  {
             ...page,
             name: e.target.value,
         });
-
     }
 
-    async function handleFetchProject() {
-        if(projectId) {
-            const project = await getProject(umi, projectId);
-            const firstPage = project?.pages?.tree[0]?.children[0]?.id;
-            
-            updateProject(projectId, project);
+    async function handleFetchProject() {   
+        if(!projectId) return;
 
+        setIsFetchingProject(true);
+
+        try {
+            const projectMetadata = await getProject(umi, projectId);
+            const firstPage = projectMetadata?.pages?.tree[0]?.children[0]?.id;
+            
+            updateProject(projectId, projectMetadata);
+    
             selectProject(projectId);
             selectPage(firstPage);
+        } catch (error) {
+            console.log(error);
         }
+
+        setIsFetchingProject(false);
     }
 
     useEffect(() => void handleFetchProject(), [projectId]);
@@ -346,29 +356,49 @@ export function Project()  {
         <>
             <div className="mx-auto grid md:grid-cols-12 gap-10">
                 <div className="xl:col-span-2 md:col-span-3">
-                    <div className="pb-3">
-                        <div className="flex justify-between">
-                            <h1 className="text-lg font-bold">{project?.name}</h1>
-                            <button className="btn-sm btn-outline btn" onClick={openProjectSettingModal}>
-                                <Settings2 height={18}/>
-                            </button>
-                        </div>
-                    </div>
+                    {isFetchingProject ? (
+                        <>
+                            {Array(5).fill(null).map((_, idx) => {
+                                return (
+                                    <div key={idx} className="py-5 w-full rounded-lg p-5 text-center bg-base-200 animate-pulse mb-5">
+                                        
+                                    </div>
+                                )
+                            })}
+                        </>
+                    ) : (
+                        <>
+                            <div className="pb-3">
+                                <div className="flex justify-between">
+                                    <h1 className="text-lg font-bold">{project?.name}</h1>
+                                    <button className="btn-sm btn-outline btn" onClick={openProjectSettingModal}>
+                                        <Settings2 height={18}/>
+                                    </button>
+                                </div>
+                            </div>
 
-                    <div className="flex items-center justify-between mb-1">
-                        <p className="text-xs font-semibold">PAGES</p>
-                        <button className="btn btn-sm btn-ghost p-1 mr-[2px]" onClick={() => addPage(
-                                        [0]
-                                    )}>
-                            <Plus height={18}/>
-                        </button>
-                    </div>
-                    <SideNav
-                        pageTree={project?.pages.tree}
-                        path={[]}
-                    />
+                            <div className="flex items-center justify-between mb-1">
+                                <p className="text-xs font-semibold">PAGES</p>
+                                <button className="btn btn-sm btn-ghost p-1 mr-[2px]" onClick={() => addPage(
+                                                [0]
+                                            )}>
+                                    <Plus height={18}/>
+                                </button>
+                            </div>
+
+                            <SideNav
+                                pageTree={project?.pages.tree}
+                                path={[]}
+                            />
+                        </>
+                    )}
                 </div>
-                {project && project.pages.tree[0].children.length > 0 ? (
+
+                {isFetchingProject ? (
+                    <div className="md:col-span-9 xl:col-span-10 py-32 w-full rounded-lg p-5 text-center bg-base-200 animate-pulse mb-5">
+                                        
+                    </div>
+                ) : project && project.pages.tree[0].children.length > 0 ? (
                     <div className="md:col-span-9 xl:col-span-10">
                         <div className="flex justify-between mb-5 flex-wrap">
                             <div className="flex items-center gap-2">
