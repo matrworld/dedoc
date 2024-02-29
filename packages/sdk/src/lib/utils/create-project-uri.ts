@@ -1,15 +1,12 @@
 import { imageUri } from "../types/const";
-import { Project } from "../types/project";
-
 
 export const createProjectConfigUri = async (config: {
   name: string;
   description: string;
   theme: 'dark';
-  image: string;
   creator: string;
 }) => {
-  const json: Project = { 
+  const json = { 
     name: config.name,
     theme: 'dark',
     description: config.description,

@@ -32,61 +32,61 @@ export const createProject = async (
       .use(mplTokenMetadata())
       .use(dasApi());
 
-    console.log('Creating collection...');
-    const collectionMint = await createCollection(umi, {
-      name: config.name,
-      description: 'DeDoc NFT Collection',
-      image: 'https://arweave.net/iP8xMGeXpydnvuGlucOKKprOdR-jt7UYvKdLGNkGh74',
-    });
-    if (!collectionMint) {
-      throw new Error('Failed to create collection');
-    }
-    console.log(
-      'Collection created: ',
-      collectionMint.publicKey.toString()
-    );
+    // console.log('Creating collection...');
+    // const collectionMint = await createCollection(umi, {
+    //   name: config.name,
+    //   description: 'DeDoc NFT Collection',
+    //   image: 'https://arweave.net/iP8xMGeXpydnvuGlucOKKprOdR-jt7UYvKdLGNkGh74',
+    // });
+    // if (!collectionMint) {
+    //   throw new Error('Failed to create collection');
+    // }
+    // console.log(
+    //   'Collection created: ',
+    //   collectionMint.publicKey.toString()
+    // );
 
-    console.log( 'Creating project config json...');
-    const projectConfigUri = await createProjectConfigUri({
-      name: config.name,
-      description: config.description,
-      theme: 'dark',
-      image: 'https:/arweave.net/iP8xMGeXpydnvuGlucOKKprOdR-jt7UYvKdLGNkGh74',
-      creator: '',
-    });
-    console.log(
-      'Project config json created!\nUri: ',
-      projectConfigUri
-    );
+    // console.log( 'Creating project config json...');
+    // const projectConfigUri = await createProjectConfigUri({
+    //   name: config.name,
+    //   description: config.description,
+    //   theme: 'dark',
+    //   image: 'https:/arweave.net/iP8xMGeXpydnvuGlucOKKprOdR-jt7UYvKdLGNkGh74',
+    //   creator: '',
+    // });
+    // console.log(
+    //   'Project config json created!\nUri: ',
+    //   projectConfigUri
+    // );
 
-    console.log('Uploading project config json...');
-    const projectConfig = await umi.uploader.uploadJson(projectConfigUri);
-    console.log('Project config uploaded!\nUri: ', projectConfig);
+    // console.log('Uploading project config json...');
+    // const projectConfig = await umi.uploader.uploadJson(projectConfigUri);
+    // console.log('Project config uploaded!\nUri: ', projectConfig);
     console.log('Creating merkle tree...');
     const { merkleTree } = await createMerkleTree(umi);
     console.log(
       'Merkle tree created:\n', merkleTree.publicKey.toString()
     );
 
-    console.log('Minting project config...');
+    // console.log('Minting project config...');
 
-    const mintConfig = { 
-      name: config.name, 
-      uri: projectConfig
-    }
-    const assetId = await mint(
-      merkleTree,
-      collectionMint,
-      mintConfig,
-      umi
-    );
-    console.log('Project config minted:\n', assetId);
-    console.log('Updating project config...');
-    const updateProject = await update(umi, collectionMint, assetId, {
-      name: 'New Name',
-    });
+    // const mintConfig = { 
+    //   name: config.name, 
+    //   uri: projectConfig
+    // }
+    // const assetId = await mint(
+    //   merkleTree.publicKey,
+    //   collectionMint,
+    //   mintConfig,
+    //   umi
+    // );
+    // console.log('Project config minted:\n', assetId);
+    // console.log('Updating project config...');
+    // const updateProject = await update(umi, collectionMint, assetId, {
+    //   name: 'New Name',
+    // });
 
-    console.log('Project config updated!\n', updateProject);
+    // console.log('Project config updated!\n', updateProject);
   } catch (error) {
     console.error(error);
   }
