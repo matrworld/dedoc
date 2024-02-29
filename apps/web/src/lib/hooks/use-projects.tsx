@@ -24,6 +24,7 @@ const DEFAULT_CONTEXT = () => ({
     setProjects: () => {},
     selectPage: () => {},
     updatePage: () => {},
+    deletePage: () => {},
     updateProject: async () => {},
     createProject: async () => {},
     deleteProject: async () => {},
@@ -44,6 +45,7 @@ const ProjectContext = createContext<{
     addPage: (path: number[]) => void,
     setProjects: (projects: Project[]) => void,
     selectPage: (pageId: string) => void,
+    deletePage: () => void,
     updatePage: (pageId: string, metadata: PageMetadata) => void,
     updateProject: (projectId: string, metadata: Project) => void,
     createProject: (projectName: string, teamId: string) => Promise<void>,
@@ -166,19 +168,19 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
 
         const updatedPagesTree = project.pages.tree;
 
-        const deletePage = (pageId: string, pages: PageTree) => {
+        const removePage = (pageId: string, pages: PageTree) => {
             return pages.filter((page) => {
                 if(page.id === pageId) {
                     return false;
                 }
 
-                page.children = deletePage(pageId, page.children);
+                page.children = removePage(pageId, page.children);
 
                 return true;
             });
         }
 
-        updatedProject.pages.tree = deletePage(selectedPage, updatedPagesTree);
+        updatedProject.pages.tree = removePage(selectedPage, updatedPagesTree);
 
         delete updatedProject.pages.metadata[selectedPage];
 
@@ -308,6 +310,7 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
             deleteProject,
             saveProject,
             moveCurrentPage,
+            deletePage,
         }}>
             {props.children}
         </ProjectContext.Provider>

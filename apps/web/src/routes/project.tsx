@@ -235,7 +235,8 @@ export function Project()  {
         projects,
         addPage,
         updateProject,
-        updatePage
+        updatePage,
+        saveProject
     } = useProjects();
 
     const editor: BlockNoteEditor = useBlockNote({
