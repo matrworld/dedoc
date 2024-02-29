@@ -9,7 +9,7 @@ import type {
 import { useWallet } from "@solana/wallet-adapter-react";
 import { randomId } from '../util';
 import { createCollection,  getUser, merkleTreePublic, mint, type Collection } from '@dedoc/sdk';
-import { publicKey } from "@metaplex-foundation/umi";
+import { KeypairSigner, publicKey } from "@metaplex-foundation/umi";
 import { useUmi } from "./use-umi";
 
 const DEFAULT_CONTEXT = () => ({
@@ -78,7 +78,7 @@ function NewProjectModal({ createProject }: { createProject: (projectName: strin
             const modal = document.getElementById('new_project_modal');
             //@ts-expect-error
             if (modal) modal.close();
-        }, 2000);
+        }, 1000);
     };
 
     return (
@@ -108,7 +108,7 @@ function NewProjectModal({ createProject }: { createProject: (projectName: strin
 }
 
 
-function InitializeAccountModal({ createAccount }: { createAccount: () => Promise<void> }) {
+function InitializeAccountModal({ createAccount }: { createAccount: () => Promise<KeypairSigner | undefined> }) {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleCreateAccount = async () => {
@@ -120,7 +120,7 @@ function InitializeAccountModal({ createAccount }: { createAccount: () => Promis
             const modal = document.getElementById('create_account_modal');
             //@ts-expect-error
             if (modal) modal.close();
-        }, 2000);
+        }, 1000);
     };
 
     return (
