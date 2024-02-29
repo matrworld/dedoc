@@ -23,7 +23,6 @@ import { clusterApiUrl } from '@solana/web3.js';
 import { Nav } from "./lib/components/nav";
 
 import { ProjectsProvider } from "./lib/hooks/use-projects";
-import { TeamProvider } from "./lib/hooks/use-team";
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
@@ -65,11 +64,9 @@ function Root() {
           <WalletProvider wallets={[]} autoConnect={true}>
               <WalletModalProvider>
                 <HashRouter basename="/">
-                  <TeamProvider>
                     <ProjectsProvider>
                       <App />
                     </ProjectsProvider>
-                  </TeamProvider>
                 </HashRouter>
               </WalletModalProvider>
           </WalletProvider>

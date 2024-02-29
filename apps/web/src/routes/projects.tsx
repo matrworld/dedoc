@@ -16,61 +16,6 @@ const initializeNewAccount = () => {
     document?.getElementById('create_account_modal')?.showModal()
 }
 
-export function NewProjectModal({ createProject }: { createProject: (projectName: string) => void }) {
-    let projectNameInput: HTMLInputElement | null = null;
-
-    return (
-        <dialog id="new_project_modal" className="modal">
-            <div className="modal-box">
-                <h3 className="font-bold text-lg">Create Project</h3>
-                <p className="py-3">Create and mint a new project.</p>
-                <input required type="text" placeholder="Project Name" className="input input-bordered w-full" ref={(input) => { projectNameInput = input; }} />
-                <div className="modal-action">
-                    <form method="dialog">
-                        <button className="btn btn-outline" onClick={() => projectNameInput && createProject(projectNameInput.value)}>Save</button>
-                    </form>
-                </div>
-            </div>
-        </dialog>
-    );
-}
-
-
-export function InitializeAccountModal({ createAccount }: { createAccount: () => void }) {
-    return (
-        <dialog id="create_account_modal" className="modal">
-            <div className="modal-box">
-                <h3 className="font-bold text-lg">Create Account</h3>
-                <p className="py-3">Initialize your account to start creating projects.</p>
-                <div className="modal-action">
-                <form method="dialog">
-                    {/* if there is a button in form, it will close the modal */}
-                    <button className="btn btn-outline" onClick={createAccount}>Create</button>
-                </form>
-                </div>
-            </div>
-        </dialog>
-    )
-}
-
-export function NewTeamModal()  {
-    return (
-        <dialog id="new_team_modal" className="modal">
-            <div className="modal-box">
-                <h3 className="font-bold text-lg">Create Team</h3>
-                <p className="py-3">Create and mint a new project.</p>
-                <input type="text" placeholder="Project Name" className="input input-bordered w-full" />
-                <div className="modal-action">
-                <form method="dialog">
-                    {/* if there is a button in form, it will close the modal */}
-                    <button className="btn btn-outline">Save</button>
-                </form>
-                </div>
-            </div>
-        </dialog>
-    )
-}
-
 function ProjectCard(props: { project: Project }) {
     return (
         <a href={`/#/project/${props.project.id}`} className="min-h-[10rem] flex flex-col justify-between bg-base-300 p-5 rounded-xl hover:opacity-50">
@@ -91,45 +36,7 @@ export function Projects()  {
     const umi = useUmi(wallet);
     const { updateProject, projects } = useProjects();
 
-    useEffect(() => {
-        console.log({projects}, [projects])
-    })
-
-    const fetchProjects = async () => {
-        const [ collection ] = await getUser(umi);
-
-        if(!collection) return initializeNewAccount();
-        
-        for(const project of collection.projects) {
-            updateProject(project.id, project);
-        }
-    };
-
-    const createProject = async (projectName: string) => {
-        const [ collection ] = await getUser(umi);
-        const key = publicKey(collection.id);
-
-        const {
-            id
-        } = collection
-
-        console.log({id});
-
-        if (key) {
-            const minted = await mint(merkleTreePublic, key, { name: projectName }, umi);
-        }
-    };
-   
-    const createAccount = async () => {
-        const collection = await createCollection(umi);
-        return collection;
-    } 
-
-    useEffect(() => {
-        if (wallet.connected) {
-            fetchProjects();
-        }
-    }, [wallet.connected]);
+    console.log(projects);
 
     return (
         <>
@@ -142,7 +49,7 @@ export function Projects()  {
                     </button>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 my-5">
-                {projects.length > 5 ? projects.map((project, idx) => (
+                {projects.length > 0 ? projects.map((project, idx) => (
                         <ProjectCard
                             key={idx}
                             project={project}
@@ -164,8 +71,6 @@ export function Projects()  {
                     )}
                 </div>
             </div>
-            <NewProjectModal createProject={createProject} />
-            <InitializeAccountModal createAccount={createAccount}/> 
         </>
     );
 }

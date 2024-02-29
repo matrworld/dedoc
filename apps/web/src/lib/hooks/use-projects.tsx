@@ -7,9 +7,9 @@ import type {
     PageTree
 } from "../types";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useTeam } from "./use-team";
 import { randomId } from '../util';
-
+import { createCollection,  getUser, merkleTreePublic, mint, type Collection } from '@dedoc/sdk';
+import { publicKey } from "@metaplex-foundation/umi";
 import { useUmi } from "./use-umi";
 
 const DEFAULT_CONTEXT = () => ({
@@ -58,17 +58,57 @@ export function useProjects() {
     return useContext(ProjectContext);
 }
 
+const openInitializeAccountModal = () => { 
+    // @ts-expect-error
+    document?.getElementById('create_account_modal')?.showModal()
+}
+
+function NewProjectModal({ createProject }: { createProject: (projectName: string) => void }) {
+    let projectNameInput: HTMLInputElement | null = null;
+
+    return (
+        <dialog id="new_project_modal" className="modal">
+            <div className="modal-box">
+                <h3 className="font-bold text-lg">Create Project</h3>
+                <p className="py-3">Create and mint a new project.</p>
+                <input required type="text" placeholder="Project Name" className="input input-bordered w-full" ref={(input) => { projectNameInput = input; }} />
+                <div className="modal-action">
+                    <form method="dialog">
+                        <button className="btn btn-outline" onClick={() => projectNameInput && createProject(projectNameInput.value)}>Save</button>
+                    </form>
+                </div>
+            </div>
+        </dialog>
+    );
+}
+
+function InitializeAccountModal({ createAccount }: { createAccount: () => void }) {
+    return (
+        <dialog id="create_account_modal" className="modal">
+            <div className="modal-box">
+                <h3 className="font-bold text-lg">Create Account</h3>
+                <p className="py-3">Initialize your account to start creating projects.</p>
+                <div className="modal-action">
+                <form method="dialog">
+                    {/* if there is a button in form, it will close the modal */}
+                    <button className="btn btn-outline" onClick={createAccount}>Create</button>
+                </form>
+                </div>
+            </div>
+        </dialog>
+    )
+}
+
 export function ProjectsProvider(props: { children: React.ReactNode }) {
     const [ projects, setProjects ] = useState<Project[]>([]);
-    const { selectedTeam } = useTeam();
-    const [ selectedProject, setSelectedProject ] = useState<string>("JCE1t78oZoBF9jogeAjWHWorAKQtxHzQoXqiNnNZskYP");
-    const [ selectedPage, setSelectedPage ] = useState<string>("d2hg2g2g2h");
+    const [ selectedProject, setSelectedProject ] = useState<string>("");
+    const [ selectedPage, setSelectedPage ] = useState<string>("");
     const wallet = useWallet();
+    const umi = useUmi(wallet);
+    const [ collections, setCollections ] = useState<Collection[]>([]);
 
     const project = projects.find((project) => project.id === selectedProject) || null
     const page = project?.pages.metadata[selectedPage] || null;
-
-    const umi = useUmi(wallet);
 
     function selectPage(pageId: string) {
         setSelectedPage(pageId);
@@ -222,13 +262,9 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
 
         const childIndex = parent?.findIndex((node) => node.id === selectedPage);
 
-        console.log({ childIndex, parent })
-
         if(childIndex === undefined || !parent) return;
 
         const newIndex = direction === "up" ? childIndex - 1 : childIndex + 1;
-
-        console.log({ newIndex })
 
         if(newIndex < 0 || newIndex >= parent.length) return;
 
@@ -243,12 +279,50 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
             newProject
         ]);
     }
+
+    const fetchProjects = async () => {
+        const [ collection ] = await getUser(umi);
+
+        if(!collection) return openInitializeAccountModal();
+
+        setProjects(collection.projects);
+    };
+
+    const createProject = async (projectName: string) => {
+        const result = await getUser(umi);
+        setCollections(result);
+
+        const [ collection ] = result;
+        const key = publicKey(collection.id);
+
+        if(!key) return;
+
+        const minted = await mint(
+            merkleTreePublic,
+            key,
+            { name: projectName },
+            umi
+        );
+
+        fetchProjects();
+    };
+   
+    const createAccount = async () => {
+        const collection = await createCollection(umi);
+        return collection;
+    } 
     
     async function selectProject(projectId: string) {
         setSelectedProject(projectId);
     };
-    async function createProject(projectName: string, teamId: string) {};
+
     async function deleteProject(projectId: string) {};
+
+    useEffect(() => {
+        if (wallet.connected) {
+            fetchProjects();
+        }
+    }, [wallet.connected]);
 
     return (
         <ProjectContext.Provider value={{
@@ -270,6 +344,9 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
             deletePage,
         }}>
             {props.children}
+
+            <NewProjectModal createProject={createProject} />
+            <InitializeAccountModal createAccount={createAccount}/> 
         </ProjectContext.Provider>
     )
 }
