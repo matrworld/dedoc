@@ -14,6 +14,7 @@ import { createCollection,  getUser, merkleTreePublic, mint, type Collection } f
 import { publicKey } from "@metaplex-foundation/umi";
 import { useUmi } from "./use-umi";
 import { updateProject as updateProjectNft } from "@dedoc/sdk";
+import { useNavigate } from "react-router-dom";
 
 const DEFAULT_CONTEXT = () => ({
     projects: [],
@@ -171,6 +172,7 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
     const [ showErrorToast, setSHowErrorToast ] = useState(false);
     const [ showSuccessToast, setShowSuccessToast ] = useState(false);
     const [ isLoading, setIsLoading ] = useState(false);
+    const navigate = useNavigate();
 
     const showSuccess = () => {
         setShowSuccessToast(true);
@@ -386,6 +388,9 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
             { name: projectName },
             umi
         );
+
+        // TODO auto navigate to the project page
+        // navigate("/projects/" + minted || "");
 
         fetchProjects();
     };
