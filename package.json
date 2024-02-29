@@ -112,6 +112,7 @@
     "querystring-es3": "~0.2.0",
     "quill": "2.0.0-rc.2",
     "react": "18.2.0",
+    "react-canvas-confetti": "^2.0.5",
     "react-dom": "18.2.0",
     "react-drag-reorder": "^1.2.0",
     "react-native-level-fs": "^3.0.0",

@@ -27,7 +27,8 @@ export type Pages = {
   }
 }
 
-export type Project = {   
+export type Project = {  
+  collection?: string; 
   id: string;
   name: string;
   theme: string;

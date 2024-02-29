@@ -1,7 +1,10 @@
-import { Key, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useProjects } from "../lib/hooks/use-projects";
-import { useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
+
+import { Project } from '@dedoc/sdk';
+import { useEffect } from "react";
+
 import { Project} from '@dedoc/sdk';
 import { useUmi } from "../lib/hooks/use-umi";
 
@@ -26,24 +29,37 @@ function ProjectCard(props: { project: Project }) {
 }
 
 export function Projects()  {
-    const wallet = useWallet();
-    const umi = useUmi(wallet);
-    const { updateProject, projects } = useProjects();
+    const { projects, openNewProject, selectPage, selectProject, isFetchingProjects } = useProjects();
 
-    console.log(projects);
+    useEffect(() => {
+        selectProject("");
+        selectPage("");
+    }, []);
 
     return (
         <>
             <div className="mx-auto max-w-6xl">
                 <div className="flex justify-between">
                     <h1 className="text-3xl font-bold">Projects</h1>
-                    <button className="btn btn-outline" onClick={openNewProject}>
-                        <Plus />
-                        New Project
-                    </button>
+
+                    {(!isFetchingProjects && 
+                        <button className="btn btn-outline" onClick={openNewProject}>
+                            <Plus />
+                            New Project
+                        </button>
+                    )}
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 my-5">
-                {projects.length > 0 ? projects.map((project, idx) => (
+
+                {isFetchingProjects ? (
+                    Array(3).fill(null).map((_, idx) => {
+                        return (
+                            <div key={idx} className="py-20 w-full rounded-lg p-5 text-center bg-base-300 animate-pulse">
+                                
+                            </div>
+                        )
+                    })
+                ): projects.length > 0 ? projects.map((project, idx) => (
                         <ProjectCard
                             key={idx}
                             project={project}

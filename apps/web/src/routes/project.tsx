@@ -84,6 +84,11 @@ const openProjectSettingModal = () => {
     document?.getElementById('project_settings_modal')?.showModal()
 }
 
+const openSaveProject = () => {
+    // @ts-expect-error
+    document?.getElementById('save_project_modal')?.showModal()
+}
+
 export function DeletePageModal()  {
     const {
         deletePage,
@@ -225,6 +230,34 @@ export function ProjectSettingsModal()  {
     )
 }
 
+function SaveModal() {
+    const { saveProject } = useProjects();
+
+    async function handleSave() {
+        saveProject();
+
+        // @ts-expect-error
+        document?.getElementById('save_project_modal')?.close();
+    }
+
+    return (
+        <dialog id="save_project_modal" className="modal">
+            <div className="modal-box">
+                <h3 className="font-bold text-lg">Save Project</h3>
+                <p className="py-3">Save and deploy any changes to the project.</p>
+                <div className="modal-action">
+                    <form method="dialog" className="flex w-full justify-between">
+                        <button className="btn btn-outline">Cancel</button>
+                        <button
+                            className="btn btn-primary"
+                            onClick={handleSave}>Save</button>
+                    </form>
+                </div>
+            </div>
+        </dialog>
+    )
+}
+
 export function Project()  {
     const [ markdown, setMarkdown ] = useState("");
     let { id: projectId } = useParams();
@@ -238,8 +271,10 @@ export function Project()  {
         updateProject,
         updatePage,
         selectPage,
-        saveProject,
-        selectProject
+        selectProject,
+        setIsFetchingProjects,
+        setIsFetchingProject,
+        isFetchingProject
     } = useProjects();
 
     const wallet = useWallet();
@@ -275,7 +310,7 @@ export function Project()  {
         });
     }, [markdown]);
 
-    useEffect(() => {    
+    useEffect(() => { 
         if(!page) return;
         
         editor
@@ -293,21 +328,26 @@ export function Project()  {
             ...page,
             name: e.target.value,
         });
-
     }
 
-    async function handleFetchProject() {
-        console.log({projectId})
+    async function handleFetchProject() {   
+        if(!projectId) return;
 
-        if(projectId) {
-            const project = await getProject(umi, projectId);
-            const firstPage = project?.pages?.tree[0]?.children[0]?.id;
+        setIsFetchingProject(true);
+
+        try {
+            const projectMetadata = await getProject(umi, projectId);
+            const firstPage = projectMetadata?.pages?.tree[0]?.children[0]?.id;
             
-            updateProject(projectId, project);
-
+            updateProject(projectId, projectMetadata);
+    
             selectProject(projectId);
             selectPage(firstPage);
+        } catch (error) {
+            console.log(error);
         }
+
+        setIsFetchingProject(false);
     }
 
     useEffect(() => void handleFetchProject(), [projectId]);
@@ -316,31 +356,51 @@ export function Project()  {
         <>
             <div className="mx-auto grid md:grid-cols-12 gap-10">
                 <div className="xl:col-span-2 md:col-span-3">
-                    <div className="pb-3">
-                        <div className="flex justify-between">
-                            <h1 className="text-lg font-bold">{project?.name}</h1>
-                            <button className="btn-sm btn-outline btn" onClick={openProjectSettingModal}>
-                                <Settings2 height={18}/>
-                            </button>
-                        </div>
-                    </div>
+                    {isFetchingProject ? (
+                        <>
+                            {Array(5).fill(null).map((_, idx) => {
+                                return (
+                                    <div key={idx} className="py-5 w-full rounded-lg p-5 text-center bg-base-200 animate-pulse mb-5">
+                                        
+                                    </div>
+                                )
+                            })}
+                        </>
+                    ) : (
+                        <>
+                            <div className="pb-3">
+                                <div className="flex justify-between">
+                                    <h1 className="text-lg font-bold">{project?.name}</h1>
+                                    <button className="btn-sm btn-outline btn" onClick={openProjectSettingModal}>
+                                        <Settings2 height={18}/>
+                                    </button>
+                                </div>
+                            </div>
 
-                    <div className="flex items-center justify-between mb-1">
-                        <p className="text-xs font-semibold">PAGES</p>
-                        <button className="btn btn-sm btn-ghost p-1 mr-[2px]" onClick={() => addPage(
-                                        [0]
-                                    )}>
-                            <Plus height={18}/>
-                        </button>
-                    </div>
-                    <SideNav
-                        pageTree={project?.pages.tree}
-                        path={[]}
-                    />
+                            <div className="flex items-center justify-between mb-1">
+                                <p className="text-xs font-semibold">PAGES</p>
+                                <button className="btn btn-sm btn-ghost p-1 mr-[2px]" onClick={() => addPage(
+                                                [0]
+                                            )}>
+                                    <Plus height={18}/>
+                                </button>
+                            </div>
+
+                            <SideNav
+                                pageTree={project?.pages.tree}
+                                path={[]}
+                            />
+                        </>
+                    )}
                 </div>
-                {project && project.pages.tree[0].children.length > 0 ? (
+
+                {isFetchingProject ? (
+                    <div className="md:col-span-9 xl:col-span-10 py-32 w-full rounded-lg p-5 text-center bg-base-200 animate-pulse mb-5">
+                                        
+                    </div>
+                ) : project && project.pages.tree[0].children.length > 0 ? (
                     <div className="md:col-span-9 xl:col-span-10">
-                        <div className="flex justify-between mb-5">
+                        <div className="flex justify-between mb-5 flex-wrap">
                             <div className="flex items-center gap-2">
                                         <input
                                             type="text"
@@ -361,7 +421,7 @@ export function Project()  {
                                 <button className="btn btn-sm btn-outline p-1 mr-[2px] text-red-900" onClick={openDeletePage}>
                                     <Ban height={16}/>
                                 </button>
-                                <button className="btn btn-sm btn-outline" onClick={saveProject}>Save</button>
+                                <button className="btn btn-sm btn-outline" onClick={openSaveProject}>Save</button>
                             </div>
                         </div>
                         <BlockNoteView editor={editor} />
@@ -384,6 +444,8 @@ export function Project()  {
                     </div>
                 )}
             </div>
+
+            <SaveModal />
             <DeletePageModal />
             <ProjectSettingsModal />
         </>
