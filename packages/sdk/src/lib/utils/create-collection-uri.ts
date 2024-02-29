@@ -1,26 +1,26 @@
+import { Umi, publicKey } from '@metaplex-foundation/umi';
+import { imageUri } from "../types/const";
+
 export const generateCollectionUri = async (config: {
-  name: string;
-  description: string;
-  creator: string;
-  imageUri: string;
+  umi: Umi;
 }) => {
   const uri = [
     {
-      name: config.name,
+      name: 'DEDOC',
       symbol: 'DEDOC',
-      description: config.description,
+      description: 'WEB3 DOCS - ALL ON-CHAIN.',
       seller_fee_basis_points: 0,
-      image: config.imageUri,
+      image: imageUri,
       external_url: 'https://www.dedoc.com/',
       collection: {
-        name: config.name,
+        name: 'DEDOC',
       },
       attributes: [],
       properties: {
         category: 'image',
         creators: [
           {
-            address: config.creator,
+            address: config.umi.payer.publicKey,
             share: 100,
           },
         ],

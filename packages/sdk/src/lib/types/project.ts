@@ -1,3 +1,5 @@
+import { DasApiAssetList } from "@metaplex-foundation/digital-asset-standard-api";
+
 type PageNode = { 
     id: string;
     children: PageNode[];
@@ -24,11 +26,13 @@ type PageNode = {
       }
     }
   }
-
-  export { 
-    Project
-  }
-
+  type GetUserResponse = {
+    collections: Collection[];
+  };
+  type Collection = {
+    id: string;
+    projects: DasApiAssetList;
+  };
 
 export const DEFAULT_PROJECT = (project) => ({
     name: 'Test',
@@ -61,4 +65,10 @@ export const DEFAULT_PROJECT = (project) => ({
       }
     },
     ...project,
-  })
+})
+
+export { 
+    type Project, 
+    type GetUserResponse, 
+    type Collection,
+}

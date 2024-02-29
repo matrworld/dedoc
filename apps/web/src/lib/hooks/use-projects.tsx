@@ -24,7 +24,6 @@ const DEFAULT_CONTEXT = () => ({
     setProjects: () => {},
     selectPage: () => {},
     updatePage: () => {},
-    deletePage: () => {},
     updateProject: async () => {},
     createProject: async () => {},
     deleteProject: async () => {},
@@ -46,7 +45,6 @@ const ProjectContext = createContext<{
     setProjects: (projects: Project[]) => void,
     selectPage: (pageId: string) => void,
     updatePage: (pageId: string, metadata: PageMetadata) => void,
-    deletePage: () => void
     updateProject: (projectId: string, metadata: Project) => void,
     createProject: (projectName: string, teamId: string) => Promise<void>,
     deleteProject: (projectId: string) => Promise<void>,
@@ -75,6 +73,8 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
     const project = projects.find((project) => project.id === selectedProject) || null
     const page = project?.pages.metadata[selectedPage] || null;
 
+    const umi = useUmi(wallet);
+
     function selectPage(pageId: string) {
         setSelectedPage(pageId);
     }
@@ -86,7 +86,9 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
         const [pathIdx, ...nextPath] = path;
     
         const current = pages[pathIdx];
-        
+    
+        console.log(path, {nextPath})
+    
         if (!nextPath.length) {
             return current;
         }
@@ -300,7 +302,6 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
             setProjects,
             selectPage,
             updatePage,
-            deletePage,
             selectProject,
             updateProject,
             createProject,

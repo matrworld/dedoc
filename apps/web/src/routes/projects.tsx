@@ -1,9 +1,10 @@
 import { Plus } from "lucide-react";
 import { useProjects } from "../lib/hooks/use-projects";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { createCollection } from '@dedoc/sdk';
+import { createCollection,  getUser, merkleTreePublic, mint } from '@dedoc/sdk';
 import { useUmi } from "../lib/hooks/use-umi";
+import { publicKey } from "@metaplex-foundation/umi";
 
 const openNewProject = () => {
     // @ts-expect-error
@@ -15,23 +16,25 @@ const initializeNewAccount = () => {
     document?.getElementById('create_account_modal')?.showModal()
 }
 
-export function NewProjectModal()  {
+export function NewProjectModal({ createProject }: { createProject: (projectName: string) => void }) {
+    let projectNameInput: HTMLInputElement | null = null;
+
     return (
         <dialog id="new_project_modal" className="modal">
             <div className="modal-box">
-                <h3 className="font-bold text-lg">C Project</h3>
+                <h3 className="font-bold text-lg">Create Project</h3>
                 <p className="py-3">Create and mint a new project.</p>
-                <input type="text" placeholder="Project Name" className="input input-bordered w-full" />
+                <input required type="text" placeholder="Project Name" className="input input-bordered w-full" ref={(input) => { projectNameInput = input; }} />
                 <div className="modal-action">
-                <form method="dialog">
-                    {/* if there is a button in form, it will close the modal */}
-                    <button className="btn btn-outline">Save</button>
-                </form>
+                    <form method="dialog">
+                        <button className="btn btn-outline" onClick={() => projectNameInput && createProject(projectNameInput.value)}>Save</button>
+                    </form>
                 </div>
             </div>
         </dialog>
-    )
+    );
 }
+
 
 export function InitializeAccountModal({ createAccount }: { createAccount: () => void }) {
     return (
@@ -84,25 +87,42 @@ function ProjectCard(props: { name: string, wallet: string }) {
 }
 
 export function Projects()  {
-    const { projects } = useProjects();
     const wallet = useWallet();
+    const umi = useUmi(wallet);
+    const [userProjects, setUserProjects] = useState<any[]>([]);
+
+    const fetchProjects = async () => {
+        const assets = await getUser(umi);
+        if (assets.length > 0 && assets[0].collections.length > 0 && assets[0].collections[0].projects.items) {
+            setUserProjects(assets[0].collections[0].projects.items);
+        } else {
+            setUserProjects([]);
+            if (assets.length === 0 || assets[0].collections.length === 0) {
+                initializeNewAccount();
+            }
+        }
+    };
+    const getUserCollection = async () => {
+        const assets = await getUser(umi); 
+        const collectionMint = publicKey(assets[0].collections[0].id);
+        return collectionMint;
+    }
+    const createProject = async (projectName: string) => {
+        const userCollection = await getUserCollection();
+        if (userCollection) {
+            const minted = await mint(merkleTreePublic, userCollection, { name: projectName }, umi);
+        }
+    };
+   
     const createAccount = async () => {
-        const umi = useUmi(wallet);
-        const collection = await createCollection(umi, { 
-            name: 'DeDoc', 
-            description: 'DeDoc NFT Collection',
-            image: 'https://arweave.net/iP8xMGeXpydnvuGlucOKKprOdR-jt7UYvKdLGNkGh74',
-        })
-        console.log(collection?.publicKey.toString());
+        const collection = await createCollection(umi);
+        return collection;
     } 
     useEffect(() => {
-       
-    }, [wallet?.connected]);
-    // const createAccountModal = document.getElementById('create_account_modal');
-    // if (createAccountModal) {
-    //     // @ts-expect-error
-    //     createAccountModal?.showModal();
-    // }
+        if (wallet.connected) {
+            fetchProjects();
+        }
+    }, [wallet.connected, umi]);
     return (
         <>
             <div className="mx-auto max-w-6xl">
@@ -112,22 +132,19 @@ export function Projects()  {
                         <Plus />
                         New Project
                     </button>
-                    <button className="btn btn-outline" onClick={initializeNewAccount}>
-                        <Plus />
-                        Creating Account
-                    </button>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 my-5">
-                    {projects.map((project: any) => (
+                {userProjects.map((project) => (
                         <ProjectCard
-                            name="Project 1"
-                            wallet="0x4e3f..."
+                            key={project.id}
+                            name={project.content.metadata.name}
+                            wallet={project.id}
                         />
                     ))}
                     
                 </div>
             </div>
-            <NewProjectModal />
+            <NewProjectModal createProject={createProject} />
             <InitializeAccountModal createAccount={createAccount}/> 
         </>
     );

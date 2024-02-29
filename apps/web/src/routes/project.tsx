@@ -31,6 +31,7 @@ function SideNav(props: {
                     {project?.pages.metadata[props.id]?.name}
                 </p>
 
+
                 {path.length < reachedMaxDepth && (
                     <span className="btn btn-sm btn-ghost p-1 hover-child" onClick={() => addPage(
                             props.pagePath,
@@ -219,7 +220,6 @@ export function ProjectSettingsModal()  {
     )
 }
 
-
 export function Project()  {
     const [ isEditingName, setIsEditingName ] = useState(false);
     const [ isEditingProjectName, setIsEditingProjectName ] = useState(false);
@@ -230,10 +230,12 @@ export function Project()  {
         page,
         selectedPage,
         moveCurrentPage,
+        selectPage,
+        setProjects,
+        projects,
         addPage,
         updateProject,
-        updatePage,
-        saveProject
+        updatePage
     } = useProjects();
 
     const editor: BlockNoteEditor = useBlockNote({
@@ -284,6 +286,11 @@ export function Project()  {
             ...page,
             name: e.target.value,
         });
+
+    }
+    
+    const openSettings = () => {
+        console.log("Open settings");
     }
 
     return (
