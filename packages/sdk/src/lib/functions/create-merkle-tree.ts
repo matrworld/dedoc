@@ -8,6 +8,7 @@ export async function createMerkleTree(umi: Umi) {
     maxDepth: 14,
     maxBufferSize: 64,
     treeCreator: umi.payer,
+    public: true
   });
   await builder.sendAndConfirm(umi, { confirm: { commitment: 'finalized' } });
   return {

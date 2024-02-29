@@ -4,27 +4,34 @@ import {
   mintToCollectionV1,
   parseLeafFromMintToCollectionV1Transaction,
 } from '@metaplex-foundation/mpl-bubblegum';
-import type { KeypairSigner, Umi } from '@metaplex-foundation/umi';
+import type { PublicKey, Umi } from '@metaplex-foundation/umi';
+import { createProjectConfigUri } from '../utils/create-project-uri';
 
 export const mint = async (
-  merkleTree: KeypairSigner,
-  collectionMint: KeypairSigner,
+  merkleTree: PublicKey,
+  collectionMint: PublicKey,
   config: {
     name: string;
-    uri: string;
   },
   umi: Umi
 ) => {
+  const project = await createProjectConfigUri({
+      name: config.name, 
+      description: 'DeDoc Project',
+      theme: 'dark',
+      creator: umi.payer.publicKey
+  })
+  const uri = await umi.uploader.uploadJson(project)
   const { signature } = await mintToCollectionV1(umi, {
     leafOwner: umi.payer.publicKey,
-    merkleTree: merkleTree.publicKey,
-    collectionMint: collectionMint.publicKey, 
+    merkleTree: merkleTree,
+    collectionMint: collectionMint, 
     payer: umi.payer,
     metadata: {
       name: config.name,
-      uri: config.uri,
+      uri: uri,
       sellerFeeBasisPoints: 0,
-      collection: { key: collectionMint.publicKey, verified: false },
+      collection: { key: collectionMint, verified: true },
       creators: [
         { address: umi.identity.publicKey, verified: false, share: 100 },
       ],
@@ -36,7 +43,7 @@ export const mint = async (
       signature
     );
     const assetId = findLeafAssetIdPda(umi, {
-      merkleTree: merkleTree.publicKey,
+      merkleTree: merkleTree,
       leafIndex: leaf.nonce,
     })[0];
     return assetId;

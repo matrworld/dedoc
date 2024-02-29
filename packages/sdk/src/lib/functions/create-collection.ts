@@ -11,23 +11,16 @@ import { generateCollectionUri } from '../utils/create-collection-uri';
 
 export const createCollection = async (
   umi: Umi,
-  config: {
-    name: string;
-    description: string;
-    image: string;
-  }
 ) => {
-  console.log('Creating collection...');
   const uri = await generateCollectionUri({
     umi: umi,
   });
   const jsonUri = await umi.uploader.uploadJson(uri)
-  console.log('Collection json uri:', jsonUri)
   const collectionMint = generateSigner(umi);
-   const mint = await createV1(umi, {
+  await createV1(umi, {
     mint: collectionMint,
     authority: umi.payer,
-    name: config.name,
+    name: 'DEDOC',
     uri: jsonUri,
     creators: [
       {
@@ -40,7 +33,6 @@ export const createCollection = async (
     isCollection: true,
     tokenStandard: TokenStandard.NonFungible,
   }).sendAndConfirm(umi);
-  console.log('Collection created:', collectionMint.publicKey.toString())
   let attempts = 0;
   while (attempts < 10) {
     try {
