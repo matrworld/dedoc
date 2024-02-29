@@ -97,6 +97,9 @@ export function Projects()  {
             setUserProjects(assets[0].collections[0].projects.items);
         } else {
             setUserProjects([]);
+            if (assets.length === 0 || assets[0].collections.length === 0) {
+                initializeNewAccount();
+            }
         }
     };
     const getUserCollection = async () => {
