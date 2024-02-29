@@ -110,7 +110,6 @@ export function DeletePageModal()  {
                     type="text"
                     className="input input-text input-bordered w-full"
                     placeholder="Type here..."
-                    value={project?.name}
                     onInput={handleProjectNameInput}
                 />
                 <div className="modal-action">
