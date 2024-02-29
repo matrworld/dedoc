@@ -42,7 +42,7 @@ export function Nav() {
                   My Projects
                 </a>
               )}
-              <WalletMultiButton disabled={!import.meta.env.DEV}>
+              <WalletMultiButton>
                 {connected ? `${publicKey?.toBase58().slice(0, 6)}...` : <>
                     <p>
                         Connect Wallet
