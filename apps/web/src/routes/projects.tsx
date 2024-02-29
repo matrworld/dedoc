@@ -111,7 +111,6 @@ export function Projects()  {
         const userCollection = await getUserCollection();
         if (userCollection) {
             const minted = await mint(merkleTreePublic, userCollection, { name: projectName }, umi);
-            console.log('Project minted: ', minted);
         }
     };
    
