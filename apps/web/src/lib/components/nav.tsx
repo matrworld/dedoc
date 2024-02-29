@@ -37,6 +37,11 @@ export function Nav() {
             )}
           </div>
           <div className="flex gap-3 flex-wrap">
+              {connected && !location.pathname.startsWith("/project") && (
+                <a className="btn" href="/#/project">
+                  My Projects
+                </a>
+              )}
               <WalletMultiButton disabled={!import.meta.env.DEV}>
                 {connected ? `${publicKey?.toBase58().slice(0, 6)}...` : <>
                     <p>
