@@ -1,5 +1,5 @@
 
-![header](./doc/preview.jpg)
+![header](/doc/preview.jpg)
 # DEDOC Web3 Notes App
 - React app with React Router, Tailwind, DaisyUI and Solana Wallet Adapter.
 - Shared SDK
@@ -99,6 +99,10 @@ Here are a list of things DeDoc handles:
 
 # FAQ 
 
+## Can I collaborate with others on my DeDoc projects?
+
+Not currently, but this is a feature we plan on adding in the future, and something we have set up early on to prepare for with existing users. 
+
 ## Do I own my assets created on DeDoc? 
 Yes, any user who creates an account and subsequent projects have full authority over those on-chain assets. 
 
@@ -109,5 +113,18 @@ It's easier said than done, but looking at our preset model for creating, displa
 At the moment, there is no vendor cost for creating, storing, and uploading your documentation on-chain. However, you will be responsilble for paying the on-chain fees associated with the creation of any asset. 
 
 ## I have other questions, where is the best place to ask? 
-
 Join our server, [Ru Labs](https://discord.gg/pyjAVAqSbX),  if you have any questions or need any support. 
+
+## Where are my assets stored? 
+Assets are stored on Arweave and Solana. Arweave handles the JSON storage for your assets, while the Solana ledger maintains the history for your assets. 
+
+## How much on-chain fees can I expect?
+The most costly operation is creating an account, something you do 1 time per wallet, and this operation is .02 SOL ($2-3 at today's price). Updates and uploads only range in cost from a few cents.
+
+## Can I import existing documenation into DeDoc? 
+
+Yes, you can follow our existing schema to import pages into DeDoc. 
+
+## Is there a backup option for my documentation in case of data loss?
+
+Since all data is on-chain and owned by the user, any loss of data by the user may be permanent and DeDoc is not held liable. You are allowed to back these files up in any way you see fit. 
