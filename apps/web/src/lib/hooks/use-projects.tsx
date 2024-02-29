@@ -15,6 +15,7 @@ import { publicKey } from "@metaplex-foundation/umi";
 import { useUmi } from "./use-umi";
 import { updateProject as updateProjectNft } from "@dedoc/sdk";
 import { useNavigate } from "react-router-dom";
+import { Check, Copy } from "lucide-react";
 
 const DEFAULT_CONTEXT = () => ({
     projects: [],
@@ -82,6 +83,12 @@ export const openNewProject = () => {
     document?.getElementById('new_project_modal')?.showModal()
 }
 
+const openSaveSucccessModal = () => {
+    // @ts-expect-error
+    document?.getElementById('save_success_modal')?.showModal()
+}
+
+
 function NewProjectModal({ createProject }: { createProject: (projectName: string) => void }) {
     const [projectName, setProjectName] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -146,19 +153,78 @@ function InitializeAccountModal({ createAccount }: { createAccount: () => Promis
         <dialog id="create_account_modal" className="modal">
             <div className="modal-box">
                 <h3 className="font-bold text-lg">Create Account</h3>
-               
-                        <p className="py-3">Initialize your account to start creating projects.</p>
-                        <div className="modal-action">
-                            {isLoading ? (
-                                <span className="loading loading-spinner my-2 loading-lg"></span>
-                            ) : (
-                                <button className="btn btn-outline" onClick={handleCreateAccount}>Create</button>
-                            )}
-                        </div>
+                <p className="py-3">Initialize your account to start creating projects.</p>
+                <div className="modal-action">
+                    {isLoading ? (
+                        <span className="loading loading-spinner my-2 loading-lg"></span>
+                    ) : (
+                        <button className="btn btn-outline" onClick={handleCreateAccount}>Create</button>
+                    )}
+                </div>
             </div>
         </dialog>
     );
 }
+
+
+export function ProjectSavedModal()  {
+    const { project, updateProject } = useProjects();
+
+    const [ didCopy, setDidCopy ] = useState(false);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(`${window?.location?.origin}/#/${project?.id}`);
+
+        setDidCopy(true);
+
+        setTimeout(() => {
+            setDidCopy(false);
+        }, 3000);
+    }
+
+    return (
+        <dialog id="save_success_modal" className="modal">
+            <div className="modal-box">
+                <div className="flex items-center">
+                    <h3>Project Saved</h3>
+                </div>
+
+                <div className="my-3">
+                    <div className="flex items-center justify-between">
+                        <p className="text-xs uppercase font-semibold">URL</p>
+                        <button className="btn btn-sm btn-ghost text-xs" onClick={handleCopy}>
+                            {didCopy ? (
+                                <Check size={13}/>
+                            ) : (
+                                <Copy size={13}/>
+                            )}
+
+                            {didCopy ? (
+                                "Copied"
+                            ) : (
+                                "Copy"
+                            )}
+                        </button>
+                    </div>
+                    <a
+                        className="bg-black bg-opacity-80 p-2 rounded-lg text-xs flex break-all link"
+                        target='_blank'
+                        href={`${window?.location?.origin}/#/${project?.id}`}
+                    >
+                        {window?.location?.origin}/#/{project?.id}
+                    </a>
+                </div>
+
+                <div className="modal-action">
+                    <form method="dialog" className="flex w-full justify-between">
+                        <button className="btn btn-outline">Close</button>
+                    </form>
+                </div>
+            </div>
+        </dialog>
+    )
+}
+
 export function ProjectsProvider(props: { children: React.ReactNode }) {
     const [ projects, setProjects ] = useState<Project[]>([]);
     const [ selectedProject, setSelectedProject ] = useState<string>("");
@@ -309,6 +375,7 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
             await updateProjectNft(umi, project?.collection || "", project);
 
             showSuccess();
+            openSaveSucccessModal();
         } catch (error) {
             showError();
 
@@ -468,6 +535,7 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
             
             }
 
+            <ProjectSavedModal />
             <NewProjectModal createProject={createProject} />
             <InitializeAccountModal createAccount={createAccount}/> 
 

@@ -29,6 +29,7 @@ function ProjectCard(props: { project: Project }) {
 
 export function Projects()  {
     const { projects, openNewProject, selectPage, selectProject, isFetchingProjects } = useProjects();
+    const wallet = useWallet();
 
     useEffect(() => {
         selectProject("");
