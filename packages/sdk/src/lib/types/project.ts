@@ -28,3 +28,37 @@ type PageNode = {
   export { 
     Project
   }
+
+
+export const DEFAULT_PROJECT = (project) => ({
+    name: 'Test',
+    theme: 'dark',
+    image: '',
+    deployments: { production: '', staging: '' },
+    pages: {
+      tree: [
+        {
+          id: 'root',
+          children: [
+            {
+              id: '000000000',
+              children: []
+            }
+          ]
+        }
+      ],
+      metadata: {
+            "000000000": {
+              name: 'Getting Started',
+              content: `# Getting Started
+  ### Things You Can Do
+  
+  *   Create a page by clicking the "+" button.
+  *   Write some content
+  *   Save and deploy
+  `,
+        }
+      }
+    },
+    ...project,
+  })

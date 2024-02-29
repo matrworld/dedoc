@@ -199,6 +199,8 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
             saves.shift();
         }
 
+        console.log(JSON.stringify(serialized));
+
         window.localStorage.setItem(lsKey, JSON.stringify(saves));
     }
 
