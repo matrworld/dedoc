@@ -84,6 +84,11 @@ const openProjectSettingModal = () => {
     document?.getElementById('project_settings_modal')?.showModal()
 }
 
+const openSaveProject = () => {
+    // @ts-expect-error
+    document?.getElementById('save_project_modal')?.showModal()
+}
+
 export function DeletePageModal()  {
     const {
         deletePage,
@@ -225,6 +230,35 @@ export function ProjectSettingsModal()  {
     )
 }
 
+function SaveModal() {
+    const { saveProject } = useProjects();
+
+    async function handleSave() {
+        saveProject();
+        
+        // @ts-expect-error
+        document?.getElementById('save_project_modal')?.close();
+
+    }
+
+    return (
+        <dialog id="save_project_modal" className="modal">
+            <div className="modal-box">
+                <h3 className="font-bold text-lg">Save Project</h3>
+                <p className="py-3">Save and deploy any changes to the project.</p>
+                <div className="modal-action">
+                    <form method="dialog" className="flex w-full justify-between">
+                        <button className="btn btn-outline">Cancel</button>
+                        <button
+                            className="btn btn-success"
+                            onClick={handleSave}>Save</button>
+                    </form>
+                </div>
+            </div>
+        </dialog>
+    )
+}
+
 export function Project()  {
     const [ markdown, setMarkdown ] = useState("");
     let { id: projectId } = useParams();
@@ -238,7 +272,6 @@ export function Project()  {
         updateProject,
         updatePage,
         selectPage,
-        saveProject,
         selectProject
     } = useProjects();
 
@@ -340,7 +373,7 @@ export function Project()  {
                 </div>
                 {project && project.pages.tree[0].children.length > 0 ? (
                     <div className="md:col-span-9 xl:col-span-10">
-                        <div className="flex justify-between mb-5">
+                        <div className="flex justify-between mb-5 flex-wrap">
                             <div className="flex items-center gap-2">
                                         <input
                                             type="text"
@@ -361,7 +394,7 @@ export function Project()  {
                                 <button className="btn btn-sm btn-outline p-1 mr-[2px] text-red-900" onClick={openDeletePage}>
                                     <Ban height={16}/>
                                 </button>
-                                <button className="btn btn-sm btn-outline" onClick={saveProject}>Save</button>
+                                <button className="btn btn-sm btn-outline" onClick={openSaveProject}>Save</button>
                             </div>
                         </div>
                         <BlockNoteView editor={editor} />
@@ -384,6 +417,8 @@ export function Project()  {
                     </div>
                 )}
             </div>
+
+            <SaveModal />
             <DeletePageModal />
             <ProjectSettingsModal />
         </>

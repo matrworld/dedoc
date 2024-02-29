@@ -1,17 +1,23 @@
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
+import { type Umi, some, PublicKey, type KeypairSigner } from '@metaplex-foundation/umi';
 
 import type {
     Project,
     PageMetadata,
     PageNode,
     PageTree
-} from "../types";
+} from "@dedoc/sdk";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { randomId } from '../util';
 import { createCollection,  getUser, merkleTreePublic, mint, type Collection } from '@dedoc/sdk';
 import { publicKey } from "@metaplex-foundation/umi";
 import { useUmi } from "./use-umi";
-
+import { updateProject as updateProjectNft } from "@dedoc/sdk";
+import {
+    getAssetWithProof,
+    updateMetadata,
+    UpdateArgsArgs,
+  } from '@metaplex-foundation/mpl-bubblegum';
 const DEFAULT_CONTEXT = () => ({
     projects: [],
     project: null,
@@ -30,6 +36,7 @@ const DEFAULT_CONTEXT = () => ({
     selectProject: () => {},
     saveProject: () => {},
     moveCurrentPage: () => {},
+    openNewProject: () => {},
 });
 
 const ProjectContext = createContext<{
@@ -52,6 +59,7 @@ const ProjectContext = createContext<{
     selectProject: (projectId: string) => void,
     saveProject: () => void,
     moveCurrentPage: (direction: "up" | "down") => void,
+    openNewProject: () => void,
 }>(DEFAULT_CONTEXT());
 
 export function useProjects() { 
@@ -61,6 +69,11 @@ export function useProjects() {
 const openInitializeAccountModal = () => { 
     // @ts-expect-error
     document?.getElementById('create_account_modal')?.showModal()
+}
+
+export const openNewProject = () => {
+    // @ts-expect-error
+    document?.getElementById('new_project_modal')?.showModal()
 }
 
 function NewProjectModal({ createProject }: { createProject: (projectName: string) => void }) {
@@ -106,6 +119,20 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
     const wallet = useWallet();
     const umi = useUmi(wallet);
     const [ collections, setCollections ] = useState<Collection[]>([]);
+
+    const [ showErrorToast, setSHowErrorToast ] = useState(false);
+    const [ showSuccessToast, setShowSuccessToast ] = useState(false);
+    const [ isLoading, setIsLoading ] = useState(false);
+
+    const showSuccess = () => {
+        setShowSuccessToast(true);
+        setTimeout(() => setShowSuccessToast(false), 2000);
+    }
+
+    const showError = () => {
+        setSHowErrorToast(true);
+        setTimeout(() => setSHowErrorToast(false), 2000);
+    }
 
     const project = projects.find((project) => project.id === selectedProject) || null
     const page = project?.pages.metadata[selectedPage] || null;
@@ -223,22 +250,39 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
         ]);
     }
 
-    function saveProject() {
-        const serialized = JSON.stringify(project);
+    async function saveProject() {
+        if(!project) return;
 
-        const lsKey = `project:${wallet?.publicKey?.toBase58()}:${project?.id}`;
+        try {
+            setIsLoading(true);
 
-        const saves = JSON.parse(window.localStorage.getItem(lsKey) || "[]");
+            const jsonUri = await umi.uploader.uploadJson(project);
 
-        saves.push(serialized);
+            const assetWithProof = await getAssetWithProof(umi, publicKey(project.id));
+          
+            const updateArgs: UpdateArgsArgs = {
+              name: some(project.name || assetWithProof.metadata.name),
+              uri: some(jsonUri || assetWithProof.metadata.uri),
+            };
+          
+            const update = await updateMetadata(umi, {
+              ...assetWithProof,
+              leafOwner: assetWithProof.leafOwner,
+              currentMetadata: assetWithProof.metadata,
+              updateArgs,
+              authority: umi.payer,
+              collectionMint: publicKey(project?.collection || ""),
+            }).sendAndConfirm(umi, { confirm: { commitment: 'finalized' } });
+          
+            showSuccess();
+        } catch (error) {
+            showError();
 
-        if(saves.length > 10) {
-            saves.shift();
+            console.error(error);
+        } finally {
+            setIsLoading(false);
         }
 
-        console.log(JSON.stringify(serialized));
-
-        window.localStorage.setItem(lsKey, JSON.stringify(saves));
     }
 
     function moveCurrentPage(direction: "up" | "down") {
@@ -342,9 +386,18 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
             saveProject,
             moveCurrentPage,
             deletePage,
+            openNewProject,
         }}>
             {props.children}
-
+            
+            {isLoading && (
+                <div className="toast toast-end">
+                    <div className="alert">
+                        <span className="loading loading-spinner loading-sm"></span>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+            )}
             <NewProjectModal createProject={createProject} />
             <InitializeAccountModal createAccount={createAccount}/> 
         </ProjectContext.Provider>
