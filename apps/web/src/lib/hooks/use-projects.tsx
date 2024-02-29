@@ -88,7 +88,6 @@ const openSaveSucccessModal = () => {
     document?.getElementById('save_success_modal')?.showModal()
 }
 
-
 function NewProjectModal({ createProject }: { createProject: (projectName: string) => void }) {
     const [projectName, setProjectName] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -133,6 +132,24 @@ function NewProjectModal({ createProject }: { createProject: (projectName: strin
     );
 }
 
+function WelcomeModal({ onContinue, onCancel }: { onContinue: () => void; onCancel: () => void; }) {
+    return (
+        <dialog id="welcome_modal" className="modal" open>
+            <div className="modal-box" style={{ padding: '0' }}>
+                <img src="./preview.jpg" alt="Welcome" className="w-full h-48 object-cover" />
+                <div className="p-5">
+                    <h3 className="font-bold text-lg text-left mt-2">Welcome to DeDoc</h3>
+                    <p className="text-left my-2">Create an account to get started.</p>
+                    <p className="text-xs italic">~0.02 SOL</p>
+                    <div className="modal-action justify-between">
+                        <button className="btn btn-outline" onClick={onCancel}>Cancel</button>
+                        <button className="btn btn-primary" onClick={onContinue}>Create Account</button>
+                    </div>
+                </div>
+            </div>
+        </dialog>
+    );
+}
 
 function InitializeAccountModal({ createAccount }: { createAccount: () => Promise<KeypairSigner | undefined> }) {
     const [isLoading, setIsLoading] = useState(false);
@@ -234,6 +251,7 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
     const [ collections, setCollections ] = useState<Collection[]>([]);
     const [ isFetchingProjects, setIsFetchingProjects] = useState(true);
     const [ isFetchingProject, setIsFetchingProject ] = useState(true);
+    const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
     const [ showErrorToast, setSHowErrorToast ] = useState(false);
     const [ showSuccessToast, setShowSuccessToast ] = useState(false);
@@ -249,6 +267,15 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
         setSHowErrorToast(true);
         setTimeout(() => setSHowErrorToast(false), 2000);
     }
+    const handleCancel = () => {
+        wallet.disconnect();  
+        setShowWelcomeModal(false);  
+        navigate('/');
+    };
+    const handleWelcomeContinue = () => {
+        setShowWelcomeModal(false); 
+        openInitializeAccountModal(); 
+    };
 
     const project = projects.find((project) => project.id === selectedProject) || null
     const page = project?.pages.metadata[selectedPage] || null;
@@ -430,7 +457,7 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
         try {
             const [ collection ] = await getUser(umi);
     
-            if(!collection) return openInitializeAccountModal();
+            if(!collection) return setShowWelcomeModal(true);
     
             setProjects(collection.projects);
         } catch (error) {
@@ -534,7 +561,7 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
                 )
             
             }
-
+            {showWelcomeModal && <WelcomeModal onContinue={handleWelcomeContinue} onCancel={handleCancel} />}
             <ProjectSavedModal />
             <NewProjectModal createProject={createProject} />
             <InitializeAccountModal createAccount={createAccount}/> 
