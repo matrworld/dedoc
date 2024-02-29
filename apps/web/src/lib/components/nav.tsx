@@ -14,11 +14,12 @@ export function Nav() {
     let location = useLocation();
     const navigate = useNavigate();
 
-    useEffect(() => {
-      if(location.pathname.startsWith("/project") && !connected) {
-        navigate("/");
-      }
-    }, [location, connected]);
+    // TODO: Auto logout
+    // useEffect(() => {
+    //   if(location.pathname.startsWith("/project") && !connected) {
+    //     navigate("/");
+    //   }
+    // }, [location, connected]);
 
     return (
       <nav className="sticky top-0 w-full p-3 z-10 nav">

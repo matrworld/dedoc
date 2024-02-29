@@ -6,6 +6,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Home } from "./routes/home";
 import { Projects } from "./routes/projects";
 import { Project } from "./routes/project";
+import { PublicProject } from "./routes/public-project";
 
 import * as ReactDOM from "react-dom";
 import { HashRouter, useLocation } from "react-router-dom";
@@ -42,6 +43,7 @@ function App() {
       <main className="min-h-screen mx-auto py-10 px-5">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/:id" element={<PublicProject />} />
             <Route path="project" element={<Projects />} />
             <Route path="project/:id" element={<Project />} />
           </Routes>
