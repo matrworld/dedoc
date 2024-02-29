@@ -23,7 +23,7 @@ module.exports = {
           "base-100": "#0D0E18",
           "base-200": "#151624",
           "base-300": "#191B2D",
-          "base-content": "#9E9FA3",
+          "base-content": "#dcdde3",
           "primary": "#FFFFFF",
           "neutral-content": "#9E9FA3",
 

@@ -14,7 +14,7 @@ export const FETCHABLE = () => ({
     isLoading: false,
     data: null,
     error: null,
-}); 5
+});
 
 // Hook for typing fetchable
 export const useFetchable = <T,>() => useState<Fetchable<T>>(FETCHABLE());
