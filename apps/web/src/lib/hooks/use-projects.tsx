@@ -11,7 +11,7 @@ import type {
 import { useWallet } from "@solana/wallet-adapter-react";
 import { randomId } from '../util';
 import { createCollection,  getUser, merkleTreePublic, mint, type Collection } from '@dedoc/sdk';
-import { KeypairSigner, publicKey } from "@metaplex-foundation/umi";
+import { publicKey } from "@metaplex-foundation/umi";
 import { useUmi } from "./use-umi";
 import { updateProject as updateProjectNft } from "@dedoc/sdk";
 

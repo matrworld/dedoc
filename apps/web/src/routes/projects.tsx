@@ -5,7 +5,6 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { Project } from '@dedoc/sdk';
 import { useEffect } from "react";
 
-import { Project} from '@dedoc/sdk';
 import { useUmi } from "../lib/hooks/use-umi";
 
 const openNewProject = () => {

@@ -4,13 +4,21 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import {
     WalletMultiButton
 } from '@solana/wallet-adapter-react-ui';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ArrowLeft } from 'lucide-react';
+import { useEffect } from 'react';
 
 export function Nav() {
     const { publicKey, connected } = useWallet();
     let location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      if(location.pathname.startsWith("/project") && !connected) {
+        navigate("/");
+      }
+    }, [location, connected]);
 
     return (
       <nav className="sticky top-0 w-full p-3 z-10 nav">
