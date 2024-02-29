@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import { type Umi, some, PublicKey, type KeypairSigner } from '@metaplex-foundation/umi';
+import Fireworks from "react-canvas-confetti/dist/presets/fireworks";
 
 import type {
     Project,
@@ -256,24 +257,8 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
         try {
             setIsLoading(true);
 
-            const jsonUri = await umi.uploader.uploadJson(project);
+            await updateProjectNft(umi, project?.collection || "", project);
 
-            const assetWithProof = await getAssetWithProof(umi, publicKey(project.id));
-          
-            const updateArgs: UpdateArgsArgs = {
-              name: some(project.name || assetWithProof.metadata.name),
-              uri: some(jsonUri || assetWithProof.metadata.uri),
-            };
-          
-            const update = await updateMetadata(umi, {
-              ...assetWithProof,
-              leafOwner: assetWithProof.leafOwner,
-              currentMetadata: assetWithProof.metadata,
-              updateArgs,
-              authority: umi.payer,
-              collectionMint: publicKey(project?.collection || ""),
-            }).sendAndConfirm(umi, { confirm: { commitment: 'finalized' } });
-          
             showSuccess();
         } catch (error) {
             showError();
@@ -398,8 +383,34 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
                     </div>
                 </div>
             )}
+
+            {
+                showSuccessToast && (
+                    <div className="toast toast-end">
+                        <div className="alert alert-success">
+                            <span>Success!</span>
+                        </div>
+                    </div>
+                )
+            }
+
+            {
+                showErrorToast && (
+                    <div className="toast toast-end">
+                        <div className="alert alert-error">
+                            <span>Something went wrong</span>
+                        </div>
+                    </div>
+                )
+            
+            }
+
             <NewProjectModal createProject={createProject} />
             <InitializeAccountModal createAccount={createAccount}/> 
+
+            {showSuccessToast && (
+                <Fireworks autorun={{ speed: 3 }} />
+            )}
         </ProjectContext.Provider>
     )
 }

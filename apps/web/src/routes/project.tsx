@@ -235,10 +235,9 @@ function SaveModal() {
 
     async function handleSave() {
         saveProject();
-        
+
         // @ts-expect-error
         document?.getElementById('save_project_modal')?.close();
-
     }
 
     return (
@@ -330,8 +329,6 @@ export function Project()  {
     }
 
     async function handleFetchProject() {
-        console.log({projectId})
-
         if(projectId) {
             const project = await getProject(umi, projectId);
             const firstPage = project?.pages?.tree[0]?.children[0]?.id;

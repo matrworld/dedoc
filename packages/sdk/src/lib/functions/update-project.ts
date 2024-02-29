@@ -12,15 +12,7 @@ export const updateProject = async (
   collection: string,
   project: Project
 ) => {
-
-  console.log("update", {
-    umi,
-    collection,
-    project,
-  })
-
   const jsonUri = await umi.uploader.uploadJson(project);
-
 
   const assetWithProof = await getAssetWithProof(umi, publicKey(project.id));
 
@@ -35,7 +27,7 @@ export const updateProject = async (
     currentMetadata: assetWithProof.metadata,
     updateArgs,
     authority: umi.payer,
-    collectionMint: publicKey(collection),
+    collectionMint: publicKey(project?.collection || ""),
   }).sendAndConfirm(umi, { confirm: { commitment: 'finalized' } });
 
   return encode(update.signature);
