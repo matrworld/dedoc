@@ -183,7 +183,6 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
     const [ selectedPage, setSelectedPage ] = useState<string>("");
     const wallet = useWallet();
     const umi = useUmi(wallet);
-    const navigate = useNavigate();
     const [ collections, setCollections ] = useState<Collection[]>([]);
     const [ isFetchingProjects, setIsFetchingProjects] = useState(true);
     const [ isFetchingProject, setIsFetchingProject ] = useState(true);
