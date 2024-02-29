@@ -2,19 +2,13 @@ import { Key, Plus } from "lucide-react";
 import { useProjects } from "../lib/hooks/use-projects";
 import { useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Project, createCollection,  getUser, merkleTreePublic, mint } from '@dedoc/sdk';
+import { Project} from '@dedoc/sdk';
 import { useUmi } from "../lib/hooks/use-umi";
-import { publicKey } from "@metaplex-foundation/umi";
 
 const openNewProject = () => {
     // @ts-expect-error
     document?.getElementById('new_project_modal')?.showModal()
-}
-
-const initializeNewAccount = () => { 
-    // @ts-expect-error
-    document?.getElementById('create_account_modal')?.showModal()
-}
+}  
 
 function ProjectCard(props: { project: Project }) {
     return (
