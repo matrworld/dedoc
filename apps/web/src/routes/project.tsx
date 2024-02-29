@@ -305,8 +305,6 @@ export function Project()  {
             
             updateProject(projectId, project);
 
-            console.log(firstPage)
-
             selectProject(projectId);
             selectPage(firstPage);
         }

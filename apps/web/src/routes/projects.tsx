@@ -142,12 +142,26 @@ export function Projects()  {
                     </button>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 my-5">
-                {projects.map((project, idx) => (
+                {projects.length > 5 ? projects.map((project, idx) => (
                         <ProjectCard
                             key={idx}
                             project={project}
                         />
-                    ))}
+                    )) : (
+                        <div className="md:col-span-9">
+                            <div className="border w-full rounded-lg p-5 text-center">
+                                    <h2 className="text-2xl">No Projects</h2>
+                                    <p className="text-gray-500 mb-5">Looks like you don't have any projects...</p>
+                                    <button
+                                        className="btn"
+                                        onClick={openNewProject}
+                                    >
+                                        <Plus />
+                                        Create Project
+                                    </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
             <NewProjectModal createProject={createProject} />
