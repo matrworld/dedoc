@@ -5,7 +5,7 @@
   "scripts": {
     "ts": "tsx --tsconfig ./tsconfig.base.json",
     "serve": "http-server",
-    "create-merkle-tree": "pnpm run ts -- ./scripts/create-merkle-tree.ts",
+    "create-merkle-tree": "pnpm run ts -- ./packages/sdk/scripts/create-tree.ts",
     "create-project": "pnpm run ts --  ./scripts/create-project.ts",
     "create-collection": "pnpm run ts --  ./scripts/create-collection.ts",
     "serve:web": "http-server ./dist/apps/web"
