@@ -1,37 +1,53 @@
-import { DasApiAssetList } from "@metaplex-foundation/digital-asset-standard-api";
+import { DasApiAsset } from "@metaplex-foundation/digital-asset-standard-api";
 
-type PageNode = { 
-    id: string;
-    children: PageNode[];
+export type PageNode = {
+  id: string;
+  children: PageNode[];
+}
+
+export type PageTree = PageNode[];
+
+export type PageTreePath = number[];
+
+export type ProjectEnvironment = "production" | "staging";
+
+export type ProjectDeployment = {
+  [environment in ProjectEnvironment]: string;
+}
+
+export type PageMetadata = {
+  name: string;
+  content: string;
+};
+
+export type Pages = {
+  tree: PageTree;
+  metadata: {
+      [id: string]: PageMetadata
   }
-  
-  type PageTree = PageNode[];
-  
-  type Project = { 
-    name: string;
-    theme: 'dark';
-    description: string;
-    image: string;
-    deployments: { 
-      production: string;
-      staging: string;
-    };
-    pages: { 
-      tree: PageTree;
-      metadata: { 
-        [id: string]: { 
-          name: string;
-          content: string;
-        }
-      }
-    }
-  }
+}
+
+export type Project = {   
+  id: string;
+  name: string;
+  theme: string;
+  image: string; 
+  deployments: ProjectDeployment;
+  pages: Pages
+}
+
+export type Team = {
+  image: string;
+  name: string;
+  projects: string[];
+};
+
   type GetUserResponse = {
     collections: Collection[];
   };
   type Collection = {
     id: string;
-    projects: DasApiAssetList;
+    projects: Project[];
   };
 
 export const DEFAULT_PROJECT = (project) => ({

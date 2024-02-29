@@ -251,47 +251,9 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
         ]);
     }
     
-    async function getProjects() {
-        setProjects([
-            {
-                id: "JCE1t78oZoBF9jogeAjWHWorAKQtxHzQoXqiNnNZskYP",
-                name: "Test",
-                theme: "dark",
-                image: "",
-                deployments: {
-                    production: "",
-                    staging: "",
-                },
-                pages: {
-                    tree: [
-                        {
-                            id: "root",
-                            children: [
-                                {
-                                    id: "d2hg2g2g2h",
-                                    children: []
-                                }
-                            ]
-                        }
-                    ],
-                    metadata: {
-                        "d2hg2g2g2h": {
-                            name: "Page 1",
-                            content: ""
-                        }
-                    },
-                }
-            }
-        ]);
-    };
-
     async function selectProject(projectId: string) {};
     async function createProject(projectName: string, teamId: string) {};
     async function deleteProject(projectId: string) {};
-    
-    useEffect(() => {
-        getProjects();
-    }, [selectedTeam, wallet?.connected]);
 
     return (
         <ProjectContext.Provider value={{

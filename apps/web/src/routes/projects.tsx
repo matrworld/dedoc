@@ -89,28 +89,34 @@ function ProjectCard(props: { name: string, wallet: string }) {
 export function Projects()  {
     const wallet = useWallet();
     const umi = useUmi(wallet);
-    const [userProjects, setUserProjects] = useState<any[]>([]);
+    const { updateProject, projects } = useProjects();
+
+    useEffect(() => {
+        console.log({projects}, [projects])
+    })
 
     const fetchProjects = async () => {
-        const assets = await getUser(umi);
-        if (assets.length > 0 && assets[0].collections.length > 0 && assets[0].collections[0].projects.items) {
-            setUserProjects(assets[0].collections[0].projects.items);
-        } else {
-            setUserProjects([]);
-            if (assets.length === 0 || assets[0].collections.length === 0) {
-                initializeNewAccount();
-            }
+        const [ collection ] = await getUser(umi);
+
+        if(!collection) return initializeNewAccount();
+        
+        for(const project of collection.projects) {
+            updateProject(project.id, project);
         }
     };
-    const getUserCollection = async () => {
-        const assets = await getUser(umi); 
-        const collectionMint = publicKey(assets[0].collections[0].id);
-        return collectionMint;
-    }
+
     const createProject = async (projectName: string) => {
-        const userCollection = await getUserCollection();
-        if (userCollection) {
-            const minted = await mint(merkleTreePublic, userCollection, { name: projectName }, umi);
+        const [ collection ] = await getUser(umi);
+        const key = publicKey(collection.id);
+
+        const {
+            id
+        } = collection
+
+        console.log({id});
+
+        if (key) {
+            const minted = await mint(merkleTreePublic, key, { name: projectName }, umi);
         }
     };
    
@@ -118,11 +124,13 @@ export function Projects()  {
         const collection = await createCollection(umi);
         return collection;
     } 
+
     useEffect(() => {
         if (wallet.connected) {
             fetchProjects();
         }
-    }, [wallet.connected, umi]);
+    }, [wallet.connected]);
+
     return (
         <>
             <div className="mx-auto max-w-6xl">
@@ -134,10 +142,10 @@ export function Projects()  {
                     </button>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 my-5">
-                {userProjects.map((project) => (
+                {projects.map((project) => (
                         <ProjectCard
                             key={project.id}
-                            name={project.content.metadata.name}
+                            name={project.name}
                             wallet={project.id}
                         />
                     ))}
