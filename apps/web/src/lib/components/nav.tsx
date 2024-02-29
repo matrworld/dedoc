@@ -19,13 +19,6 @@ export function Nav() {
             </a>
           </div>
           <div className="flex gap-3 flex-wrap">
-              <button className="btn btn-outline" disabled={!import.meta.env.DEV}>
-                  <span>
-                      <BookText size={16} />
-                  </span>
-                  Docs
-              </button>
-              
               <WalletMultiButton disabled={!import.meta.env.DEV}>
                     {connected ? `${publicKey?.toBase58().slice(0, 6)}...` : <>
                         <p>

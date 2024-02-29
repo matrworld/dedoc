@@ -11,6 +11,7 @@ import { useTeam } from "./use-team";
 import { randomId } from '../util';
 
 import { useUmi } from "./use-umi";
+import { get } from "http";
 
 const DEFAULT_CONTEXT = () => ({
     projects: [],
@@ -28,7 +29,8 @@ const DEFAULT_CONTEXT = () => ({
     createProject: async () => {},
     deleteProject: async () => {},
     selectProject: () => {},
-    saveProject: () => {}
+    saveProject: () => {},
+    moveCurrentPage: () => {},
 });
 
 const ProjectContext = createContext<{
@@ -50,6 +52,7 @@ const ProjectContext = createContext<{
     deleteProject: (projectId: string) => Promise<void>,
     selectProject: (projectId: string) => void,
     saveProject: () => void,
+    moveCurrentPage: (direction: "up" | "down") => void,
 }>(DEFAULT_CONTEXT());
 
 export function useProjects() { 
@@ -120,6 +123,8 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
         current.children.push(pageNode);
     
         updatedProject.pages.metadata[pageId] = pageMetadata;
+
+        selectPage(pageId);
     
         setProjects([
             ...projects.filter((project) => project.id !== updatedProject.id),
@@ -196,6 +201,49 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
 
         window.localStorage.setItem(lsKey, JSON.stringify(saves));
     }
+
+    function moveCurrentPage(direction: "up" | "down") {
+        if(!project) return;
+
+        const newProject = project;
+
+        function getPageParent(tree: PageTree, parent?: PageTree) {
+            for(const node of tree) {
+                if(node.id === selectedPage) {
+                    return tree;
+                }
+
+                if(node.children.length) {
+                    return getPageParent(node.children, tree);
+                }
+            }
+        }
+
+        const parent = getPageParent(newProject.pages.tree);
+
+        const childIndex = parent?.findIndex((node) => node.id === selectedPage);
+
+        console.log({ childIndex, parent })
+
+        if(childIndex === undefined || !parent) return;
+
+        const newIndex = direction === "up" ? childIndex - 1 : childIndex + 1;
+
+        console.log({ newIndex })
+
+        if(newIndex < 0 || newIndex >= parent.length) return;
+
+        const itemA = parent[childIndex];
+        const itemB = parent[newIndex];
+
+        parent[childIndex] = itemB;
+        parent[newIndex] = itemA;
+
+        setProjects([
+            ...projects.filter((project) => project.id !== newProject.id),
+            newProject
+        ]);
+    }
     
     async function getProjects() {
         setProjects([
@@ -256,6 +304,7 @@ export function ProjectsProvider(props: { children: React.ReactNode }) {
             createProject,
             deleteProject,
             saveProject,
+            moveCurrentPage,
         }}>
             {props.children}
         </ProjectContext.Provider>
